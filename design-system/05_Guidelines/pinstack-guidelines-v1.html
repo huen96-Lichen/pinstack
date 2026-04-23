@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PinStack Guidelines v1</title>
+    <link rel="stylesheet" href="../pinstack-system.css" />
+  </head>
+  <body>
+    <main>
+      <div class="shell">
+        <header class="page-header">
+          <div>
+            <div class="eyebrow">05_Guidelines</div>
+            <h1 class="title">PinStack 图标规范页与 UI 基线</h1>
+            <p class="lede">
+              首轮先锁定同一套图标网格、笔触、圆角、状态规则，再进入代码落地。8 个核心母版图标必须先在同页统一出现，
+              所有高频页面和入口都基于这套浅色主系统映射。
+            </p>
+          </div>
+          <div class="pill">浅色主系统精修基线</div>
+        </header>
+
+        <section class="panel">
+          <div class="panel-header">
+            <div class="eyebrow">Icon Spec</div>
+            <h2 class="panel-title">8 个核心母版图标</h2>
+            <p class="panel-copy">统一 16px 主栅格，线性主风格，1.45px 笔触，小圆角转折，默认中性色，品牌紫只做激活点缀。</p>
+          </div>
+          <div class="panel-body">
+            <div class="icon-spec-grid">
+              <article class="icon-card">
+                <div class="icon-frame">
+                  <svg viewBox="0 0 16 16" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.45">
+                    <path d="M4.25 2.75h2.5m2.5 0h2.5m2 1.5v2.5m0 2.5v2.5m-9.5 1h2.5m2.5 0h2.5m-9-7.5v2.5m0 2.5v2.5" stroke-linecap="round" />
+                    <rect x="5.25" y="5.25" width="5.5" height="5.5" rx="1.75" />
+                  </svg>
+                </div>
+                <strong>截图</strong>
+                <p>用边框与画幅暗示“捕获”，不使用写实相机轮廓。</p>
+              </article>
+              <article class="icon-card">
+                <div class="icon-frame">
+                  <svg viewBox="0 0 16 16" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.45">
+                    <circle cx="8" cy="8" r="4" />
+                    <path d="M3 5.25V4.5A1.5 1.5 0 0 1 4.5 3H5.25M10.75 3h.75A1.5 1.5 0 0 1 13 4.5v.75M13 10.75v.75A1.5 1.5 0 0 1 11.5 13h-.75M5.25 13H4.5A1.5 1.5 0 0 1 3 11.5v-.75" stroke-linecap="round" />
+                  </svg>
+                </div>
+                <strong>录屏</strong>
+                <p>核心是“记录正在发生”，圆形记录核外加轻量容器框。</p>
+              </article>
+              <article class="icon-card">
+                <div class="icon-frame">
+                  <svg viewBox="0 0 16 16" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.45">
+                    <rect x="5" y="3.5" width="7.5" height="9" rx="2" />
+                    <path d="M3.5 10.5V5.25A1.75 1.75 0 0 1 5.25 3.5" stroke-linecap="round" />
+                  </svg>
+                </div>
+                <strong>复制</strong>
+                <p>双层文档关系更适合工具型桌面语境，避免厚重纸片感。</p>
+              </article>
+              <article class="icon-card">
+                <div class="icon-frame">
+                  <svg viewBox="0 0 16 16" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.45">
+                    <path d="m10.6 3.55 1.85 1.85" stroke-linecap="round" />
+                    <path d="M4 12.1 10 6.1l1.9 1.9-6 6L3.5 14.5 4 12.1Z" stroke-linejoin="round" />
+                  </svg>
+                </div>
+                <strong>编辑</strong>
+                <p>斜向笔触更轻，避免传统粗笔或写实铅笔带来的陈旧感。</p>
+              </article>
+              <article class="icon-card">
+                <div class="icon-frame">
+                  <svg viewBox="0 0 16 16" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.45">
+                    <path d="M3 4.25h4.5l1.2 1.5H13a1.5 1.5 0 0 1 1.5 1.5v4.5A1.75 1.75 0 0 1 12.75 13.5h-8.5A1.75 1.75 0 0 1 2.5 11.75v-6A1.5 1.5 0 0 1 4 4.25Z" stroke-linejoin="round" />
+                    <path d="M6 8h5" stroke-linecap="round" />
+                  </svg>
+                </div>
+                <strong>分类</strong>
+                <p>保持文件夹语义但更扁平、更克制，适合系统层分类入口。</p>
+              </article>
+              <article class="icon-card">
+                <div class="icon-frame">
+                  <svg viewBox="0 0 16 16" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.45">
+                    <path d="m8 2.8 1.64 3.3 3.64.53-2.64 2.58.62 3.63L8 11.1l-3.26 1.74.62-3.63L2.72 6.63l3.64-.53L8 2.8Z" stroke-linejoin="round" />
+                  </svg>
+                </div>
+                <strong>收藏</strong>
+                <p>默认中性描边，激活时才允许小面积强调，不用金色大面积占位。</p>
+              </article>
+              <article class="icon-card">
+                <div class="icon-frame">
+                  <svg viewBox="0 0 16 16" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.45">
+                    <path d="M5.25 2.75h5.5" stroke-linecap="round" />
+                    <path d="M10.5 2.75v2l1.75 1.75H3.75L5.5 4.75v-2" stroke-linejoin="round" />
+                    <path d="M8 6.5v6.75" stroke-linecap="round" />
+                  </svg>
+                </div>
+                <strong>置顶</strong>
+                <p>沿用产品语义最强的 Pin 形态，保留桌面工作台识别度。</p>
+              </article>
+              <article class="icon-card">
+                <div class="icon-frame">
+                  <svg viewBox="0 0 16 16" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.45">
+                    <path d="M8 2.75 9 2l1.5 1 .15 1.75c.43.15.84.38 1.2.66l1.65-.68.9 1.5-1.2 1.3c.1.38.15.77.15 1.17 0 .4-.05.8-.15 1.18l1.2 1.28-.9 1.53-1.68-.68c-.35.28-.75.5-1.17.65L10.5 14l-1.5 1-1-.75-.17-1.77a4.96 4.96 0 0 1-1.18-.66l-1.66.68-.9-1.53 1.2-1.28A4.2 4.2 0 0 1 5 8.5c0-.4.05-.8.15-1.17l-1.2-1.3.9-1.5 1.65.68c.36-.28.77-.51 1.2-.66L8 2.75Z" stroke-linejoin="round" />
+                    <circle cx="8" cy="8" r="1.7" />
+                  </svg>
+                </div>
+                <strong>设置</strong>
+                <p>齿轮只做轻量结构，不走复杂工业机械风。</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section class="grid grid-2" style="margin-top: 20px;">
+          <article class="panel">
+            <div class="panel-header">
+              <div class="eyebrow">UI Tokens</div>
+              <h2 class="panel-title">颜色 / 圆角 / 字号 / 阴影</h2>
+            </div>
+            <div class="panel-body">
+              <table class="token-table">
+                <thead>
+                  <tr>
+                    <th>类别</th>
+                    <th>值</th>
+                    <th>用途</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>背景</td>
+                    <td>
+                      <span class="swatch"><span class="swatch-chip" style="background:#f5f5f3;"></span>#F5F5F3</span>
+                    </td>
+                    <td>应用背景 / 主基底</td>
+                  </tr>
+                  <tr>
+                    <td>面板</td>
+                    <td>
+                      <span class="swatch"><span class="swatch-chip" style="background:#fbfbfa;"></span>#FBFBFA</span>
+                    </td>
+                    <td>主面板 / 工作台内容层</td>
+                  </tr>
+                  <tr>
+                    <td>品牌</td>
+                    <td>
+                      <span class="swatch"><span class="swatch-chip" style="background:#7c5cfa;"></span>#7C5CFA</span>
+                    </td>
+                    <td>主 CTA / 选中态 / focus / 锚点</td>
+                  </tr>
+                  <tr>
+                    <td>圆角</td>
+                    <td>8 / 12 / 16 / 20+</td>
+                    <td>按钮输入 / 卡片 / 面板 / 主容器</td>
+                  </tr>
+                  <tr>
+                    <td>字号</td>
+                    <td>12 / 13 / 14 / 16 / 20 / 24 / 32</td>
+                    <td>正文默认 14，页面标题 24，欢迎页大标题 32</td>
+                  </tr>
+                  <tr>
+                    <td>阴影</td>
+                    <td>极轻 / 轻 / 中</td>
+                    <td>只服务层级，不制造“炫感”</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <div class="eyebrow">States</div>
+              <h2 class="panel-title">默认 / Hover / Active / Disabled</h2>
+            </div>
+            <div class="panel-body">
+              <table class="check-table">
+                <thead>
+                  <tr>
+                    <th>状态</th>
+                    <th>规则</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Default</td>
+                    <td>中性色描边，留白优先，图标与文字对比度适中。</td>
+                  </tr>
+                  <tr>
+                    <td>Hover</td>
+                    <td>仅微提升背景与前景对比，允许极轻浮起，不出现厚阴影。</td>
+                  </tr>
+                  <tr>
+                    <td>Active</td>
+                    <td>色值轻微加深，品牌紫仅用于主动作或明确选中。</td>
+                  </tr>
+                  <tr>
+                    <td>Disabled</td>
+                    <td>降低对比与不透明度，保留结构，不做灰雾模糊。</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </article>
+        </section>
+
+        <section class="panel" style="margin-top: 20px;">
+          <div class="panel-header">
+            <div class="eyebrow">Component Rules</div>
+            <h2 class="panel-title">共享组件唯一基线</h2>
+          </div>
+          <div class="panel-body">
+            <ul class="note-list">
+              <li>Button / Input 统一 8px 圆角，默认高度 36-40px。</li>
+              <li>Card 统一 12px 圆角，内容优先，工具按钮弱存在感。</li>
+              <li>Panel / Drawer / Settings / Help 统一 16px 圆角，靠留白分组，不靠粗线。</li>
+              <li>Sidebar 像工作台导航，不像企业后台；选中态使用品牌软底，不用重色块。</li>
+              <li>Search 是 Dashboard 唯一主焦点；一个区域最多一个主按钮。</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,13 @@
+node_modules
+.DS_Store
+dist
+.tmp-test
+*.log
+release
+.tmp-vk-fixtures
+.tmp-vk-smoke
+native/PinStackNotch/.build
+*.swp
+.codex/
+.trae/
+0421临时/

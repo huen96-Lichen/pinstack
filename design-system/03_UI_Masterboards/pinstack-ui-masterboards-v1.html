@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PinStack UI Masterboards v1</title>
+    <link rel="stylesheet" href="../pinstack-system.css" />
+  </head>
+  <body>
+    <main>
+      <div class="shell">
+        <header class="page-header">
+          <div>
+            <div class="eyebrow">03_UI_Masterboards</div>
+            <h1 class="title">核心 UI 母版</h1>
+            <p class="lede">先用高保真静态统一稿锁住布局、层级、主按钮和主焦点，再映射到工程组件。所有页面都必须属于同一套桌面工作台系统。</p>
+          </div>
+          <div class="pill">Dashboard / Capture Hub / Settings / Help / Onboarding / Launcher</div>
+        </header>
+
+        <section class="grid grid-2">
+          <article>
+            <div class="board-label">Dashboard 主焦点: Search</div>
+            <div class="board">
+              <div class="board-shell" style="display:flex; gap:22px;">
+                <aside class="mini-sidebar">
+                  <h4>PinStack</h4>
+                  <div class="nav-item active"><span class="nav-bullet"></span>全部</div>
+                  <div class="nav-item"><span class="nav-bullet"></span>文本</div>
+                  <div class="nav-item"><span class="nav-bullet"></span>图片</div>
+                  <div class="nav-item"><span class="nav-bullet"></span>收藏</div>
+                  <div style="margin-top: 20px;" class="state-chip brand">AI 工作区</div>
+                </aside>
+                <div style="flex:1; min-width:0;">
+                  <div class="toolbar">
+                    <div class="field" style="flex:1;">搜索内容、标签、来源</div>
+                    <div class="button">筛选</div>
+                    <div class="button accent">自定义</div>
+                    <div class="button">设置</div>
+                  </div>
+                  <div class="card-grid">
+                    <div class="card"><div class="meta"><strong>Prompt Draft</strong><div class="tools"><div class="tool-dot"></div><div class="tool-dot"></div></div></div><div class="state-chip brand">Prompt</div><p class="copy">内容优先展示，工具按钮弱存在感，只在 hover/选中时增强。</p></div>
+                    <div class="card"><div class="meta"><strong>Capture Notes</strong><div class="tools"><div class="tool-dot"></div><div class="tool-dot"></div></div></div><div class="state-chip">Reference</div><p class="copy">卡片使用中性底，避免五颜六色堆叠破坏长期使用舒适度。</p></div>
+                    <div class="card"><div class="meta"><strong>Fix Snippet</strong><div class="tools"><div class="tool-dot"></div><div class="tool-dot"></div></div></div><div class="state-chip">Fix</div><p class="copy">一个区域最多一个主按钮，卡片区域不再堆满主操作。</p></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article>
+            <div class="board-label">Capture Hub 主焦点: 开始截图</div>
+            <div class="board">
+              <div class="board-shell">
+                <div class="toolbar" style="justify-content:space-between;">
+                  <div>
+                    <div class="eyebrow" style="margin-bottom:4px;">Capture Hub</div>
+                    <strong style="font-size:20px;">轻量工作面板</strong>
+                  </div>
+                  <div class="state-chip success">权限已开启</div>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:16px;">
+                  <div class="button accent" style="min-height:44px;">自由截图</div>
+                  <div class="button" style="min-height:44px;">固定尺寸</div>
+                </div>
+                <div class="panel" style="margin-top:16px; box-shadow:none;">
+                  <div class="panel-body">
+                    <div class="field">1080 × 1350</div>
+                    <div class="button-row" style="margin-top:14px;">
+                      <div class="state-chip brand">1:1</div>
+                      <div class="state-chip">4:3</div>
+                      <div class="state-chip">16:9</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="button-row" style="margin-top:16px; justify-content:space-between;">
+                  <div class="button primary" style="min-width:160px;">开始截图</div>
+                  <div class="button">开始录屏</div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article>
+            <div class="board-label">Settings 主焦点: 当前正在编辑的控件组</div>
+            <div class="board">
+              <div class="board-shell">
+                <div class="toolbar" style="justify-content:space-between;">
+                  <strong style="font-size:20px;">设置</strong>
+                  <div class="button">关闭</div>
+                </div>
+                <div class="panel" style="margin-top:16px; box-shadow:none;">
+                  <div class="panel-body">
+                    <div style="display:flex; justify-content:space-between; gap:24px; padding:14px 0; border-bottom:1px solid var(--border-subtle);">
+                      <div><strong style="font-size:14px;">固定置顶</strong><p class="panel-copy" style="margin-top:6px;">标题 + 说明 + 右控件</p></div>
+                      <div class="state-chip success">开启</div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; gap:24px; padding:14px 0; border-bottom:1px solid var(--border-subtle);">
+                      <div><strong style="font-size:14px;">默认运行模式</strong><p class="panel-copy" style="margin-top:6px;">靠留白分组，不靠粗分割线</p></div>
+                      <div class="button-row"><div class="button accent">自定义</div><div class="button">关闭</div></div>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; gap:24px; padding:14px 0 0;">
+                      <div><strong style="font-size:14px;">快捷键</strong><p class="panel-copy" style="margin-top:6px;">信息保持稳定层级</p></div>
+                      <div class="button">⌘ / Ctrl + Shift + P</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article>
+            <div class="board-label">Help / Onboarding 主焦点: 一屏一重点</div>
+            <div class="board">
+              <div class="board-shell" style="display:grid; grid-template-columns:180px 1fr; gap:20px;">
+                <aside class="mini-sidebar" style="width:auto; padding:18px 14px; border-right:1px solid var(--border-subtle);">
+                  <div class="nav-item active"><span class="nav-bullet"></span>怎么开始</div>
+                  <div class="nav-item"><span class="nav-bullet"></span>核心概念</div>
+                  <div class="nav-item"><span class="nav-bullet"></span>快捷操作</div>
+                </aside>
+                <div>
+                  <div class="eyebrow">Help</div>
+                  <h2 class="panel-title">阅读优先，不堆技术术语</h2>
+                  <div class="panel" style="margin-top:16px; box-shadow:none;">
+                    <div class="panel-body">
+                      <div class="card" style="box-shadow:none;"><strong>1. 复制一段文字或截一张图</strong><p class="copy">只讲是什么、怎么开始、关键控制。</p></div>
+                      <div class="card" style="margin-top:12px; box-shadow:none;"><strong>2. PinStack 自动保存</strong><p class="copy">每屏只有一个主要理解点，不做堆叠说明。</p></div>
+                      <div class="card" style="margin-top:12px; box-shadow:none;"><strong>3. 随时再次使用</strong><p class="copy">品牌锚点只留给关键操作和引导节点。</p></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article>
+            <div class="board-label">桌面悬浮入口展开态</div>
+            <div class="board">
+              <div class="board-shell">
+                <div class="launcher-row">
+                  <div class="launcher"><svg viewBox="0 0 16 16" width="26" height="26" fill="none" stroke="#161616" stroke-width="1.45"><circle cx="8" cy="8" r="5.5" /><path d="M8 5v6M5 8h6" stroke-linecap="round" /></svg></div>
+                  <div class="button primary">截图</div>
+                  <div class="button">录屏</div>
+                  <div class="button">关闭</div>
+                </div>
+                <p class="panel-copy" style="margin-top:16px;">入口与展开面板有明确主从关系，入口负责触发，展开层负责操作，不做大型设置化。</p>
+              </div>
+            </div>
+          </article>
+
+          <article>
+            <div class="board-label">Onboarding 核心控制页</div>
+            <div class="board">
+              <div class="board-shell">
+                <div class="eyebrow">Step 3 / 3</div>
+                <h2 class="panel-title">关键控制</h2>
+                <p class="panel-copy">模式决定自动弹出行为，设置决定系统习惯。信息只保留关键控制，不解释实现细节。</p>
+                <div class="card" style="margin-top:16px;">
+                  <strong>Mode</strong>
+                  <p class="copy">决定复制或截图后如何处理。</p>
+                </div>
+                <div class="card" style="margin-top:12px;">
+                  <strong>Settings</strong>
+                  <p class="copy">调整快捷键、截图方式、生效范围和高级设置。</p>
+                </div>
+                <div class="button-row" style="margin-top:18px; justify-content:flex-end;">
+                  <div class="button primary">知道了</div>
+                </div>
+              </div>
+            </div>
+          </article>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,28 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="floating-shell-shadow" x="118" y="118" width="788" height="788" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#161616" flood-opacity="0.06"/>
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#161616" flood-opacity="0.04"/>
+    </filter>
+    <filter id="floating-core-shadow" x="254" y="254" width="516" height="516" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#161616" flood-opacity="0.04"/>
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#161616" flood-opacity="0.03"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#floating-shell-shadow)">
+    <rect x="150" y="150" width="724" height="724" rx="184" fill="#FBFBFA"/>
+    <rect x="152" y="152" width="720" height="720" rx="182" stroke="#EFECE6" stroke-width="4"/>
+  </g>
+
+  <circle cx="512" cy="512" r="216" fill="#FCFBF9" stroke="#E7E3DB" stroke-width="6"/>
+
+  <g filter="url(#floating-core-shadow)">
+    <circle cx="512" cy="512" r="156" fill="#FFFFFF"/>
+    <circle cx="512" cy="512" r="154" stroke="#F0ECE6" stroke-width="4"/>
+  </g>
+
+  <circle cx="512" cy="512" r="64" fill="#FBFBFA" stroke="#161616" stroke-width="10"/>
+  <path d="M512 456V568" stroke="#161616" stroke-width="16" stroke-linecap="round"/>
+  <path d="M456 512H568" stroke="#161616" stroke-width="16" stroke-linecap="round"/>
+</svg>

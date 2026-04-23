@@ -1,0 +1,4 @@
+module MediaRemoteBridge {
+    header "MediaRemoteBridge.h"
+    export *
+}

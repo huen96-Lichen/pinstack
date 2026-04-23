@@ -1,0 +1,201 @@
+{
+  "timestamp": "2026-04-09T16:43:12.561Z",
+  "mode": "mock",
+  "configuredMode": "mock",
+  "effectiveMode": "mock",
+  "effectiveProvider": "mock",
+  "rows": [
+    {
+      "sampleId": "s1",
+      "category": "开发",
+      "short_title": "Electron 截图权限异常排查记录",
+      "keyword": "待归类",
+      "canonical_title": "开发_Electron 截图权限异_待归类_PinStack",
+      "confidence": 0.64,
+      "latencyMs": 0,
+      "fallback": false,
+      "fallbackReason": null,
+      "provider": "mock"
+    },
+    {
+      "sampleId": "s2",
+      "category": "设计",
+      "short_title": "AI 工作流重构草案",
+      "keyword": "待归类",
+      "canonical_title": "设计_AI 工作流重构草案_待归类_PinStack",
+      "confidence": 0.65,
+      "latencyMs": 0,
+      "fallback": false,
+      "fallbackReason": null,
+      "provider": "mock"
+    },
+    {
+      "sampleId": "s3",
+      "category": "设计",
+      "short_title": "Dashboard 信息层级设计评审",
+      "keyword": "待归类",
+      "canonical_title": "设计_Dashboard 信息层级_待归类_PinStack",
+      "confidence": 0.6799999999999999,
+      "latencyMs": 0,
+      "fallback": false,
+      "fallbackReason": null,
+      "provider": "mock"
+    },
+    {
+      "sampleId": "s4",
+      "category": "待处理",
+      "short_title": "随手记：明天要做的事",
+      "keyword": "待归类",
+      "canonical_title": "待处理_随手记：明天要做的事_待归类_PinStack",
+      "confidence": 0.66,
+      "latencyMs": 0,
+      "fallback": false,
+      "fallbackReason": null,
+      "provider": "mock"
+    },
+    {
+      "sampleId": "s5",
+      "category": "待处理",
+      "short_title": "飞书同步失败重试机制",
+      "keyword": "待归类",
+      "canonical_title": "待处理_飞书同步失败重试机制_待归类_PinStack",
+      "confidence": 0.69,
+      "latencyMs": 0,
+      "fallback": false,
+      "fallbackReason": null,
+      "provider": "mock"
+    },
+    {
+      "sampleId": "s6",
+      "category": "待处理",
+      "short_title": "短视频脚本大纲",
+      "keyword": "待归类",
+      "canonical_title": "待处理_短视频脚本大纲_待归类_PinStack",
+      "confidence": 0.67,
+      "latencyMs": 0,
+      "fallback": false,
+      "fallbackReason": null,
+      "provider": "mock"
+    },
+    {
+      "sampleId": "s7",
+      "category": "待处理",
+      "short_title": "增长活动复盘",
+      "keyword": "待归类",
+      "canonical_title": "待处理_增长活动复盘_待归类_PinStack",
+      "confidence": 0.62,
+      "latencyMs": 0,
+      "fallback": false,
+      "fallbackReason": null,
+      "provider": "mock"
+    },
+    {
+      "sampleId": "s8",
+      "category": "AI",
+      "short_title": "产品路线图：Q3 规划",
+      "keyword": "待归类",
+      "canonical_title": "AI_产品路线图：Q3 规划_待归类_PinStack",
+      "confidence": 0.6799999999999999,
+      "latencyMs": 0,
+      "fallback": false,
+      "fallbackReason": null,
+      "provider": "mock"
+    },
+    {
+      "sampleId": "s9_long",
+      "category": "AI",
+      "short_title": "长文本边界样本",
+      "keyword": "待归类",
+      "canonical_title": "AI_长文本边界样本_待归类_PinStack",
+      "confidence": 0.66,
+      "latencyMs": 0,
+      "fallback": false,
+      "fallbackReason": null,
+      "provider": "mock"
+    },
+    {
+      "sampleId": "s10_ambiguous",
+      "category": "待处理",
+      "short_title": "这个先记一下",
+      "keyword": "待归类",
+      "canonical_title": "待处理_这个先记一下_待归类_PinStack",
+      "confidence": 0.67,
+      "latencyMs": 0,
+      "fallback": false,
+      "fallbackReason": null,
+      "provider": "mock"
+    }
+  ],
+  "stability": [
+    {
+      "sampleId": "s2",
+      "attempts": [
+        {
+          "run": 1,
+          "category": "设计",
+          "short_title": "AI 工作流重构草案",
+          "keyword": "待归类",
+          "canonical_title": "设计_AI 工作流重构草案_待归类_PinStack",
+          "confidence": 0.65,
+          "latencyMs": 0,
+          "fallbackReason": null
+        },
+        {
+          "run": 2,
+          "category": "设计",
+          "short_title": "AI 工作流重构草案",
+          "keyword": "待归类",
+          "canonical_title": "设计_AI 工作流重构草案_待归类_PinStack",
+          "confidence": 0.65,
+          "latencyMs": 0,
+          "fallbackReason": null
+        },
+        {
+          "run": 3,
+          "category": "设计",
+          "short_title": "AI 工作流重构草案",
+          "keyword": "待归类",
+          "canonical_title": "设计_AI 工作流重构草案_待归类_PinStack",
+          "confidence": 0.65,
+          "latencyMs": 0,
+          "fallbackReason": null
+        }
+      ]
+    },
+    {
+      "sampleId": "s9_long",
+      "attempts": [
+        {
+          "run": 1,
+          "category": "AI",
+          "short_title": "长文本边界样本",
+          "keyword": "待归类",
+          "canonical_title": "AI_长文本边界样本_待归类_PinStack",
+          "confidence": 0.66,
+          "latencyMs": 0,
+          "fallbackReason": null
+        },
+        {
+          "run": 2,
+          "category": "AI",
+          "short_title": "长文本边界样本",
+          "keyword": "待归类",
+          "canonical_title": "AI_长文本边界样本_待归类_PinStack",
+          "confidence": 0.66,
+          "latencyMs": 0,
+          "fallbackReason": null
+        },
+        {
+          "run": 3,
+          "category": "AI",
+          "short_title": "长文本边界样本",
+          "keyword": "待归类",
+          "canonical_title": "AI_长文本边界样本_待归类_PinStack",
+          "confidence": 0.66,
+          "latencyMs": 0,
+          "fallbackReason": null
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1461 @@
+# WORKLOG
+
+## 2026-04-18 00:58:28 | v2.6.5
+- 操作：截图体验向 PixPin 风格借鉴并与现有能力融合
+- 本步完成：
+  - Overlay 交互升级：支持选区移动、8 手柄缩放、全屏参考线、光标信息面板、选区快捷操作条。
+  - 新增截图右键菜单：`复制到剪贴板` / `保存到 PinStack` / `保存并钉住`。
+  - 主进程 CaptureController 增加区域截图动作分流能力，并复用现有截图存储/命名/Pin 链路。
+  - 新增 IPC / preload / renderer 类型定义，接通上述三类截图动作。
+  - 验证通过：`npm run check`（typecheck/build/test 全绿）。
+- 修改文件：
+  - `src/renderer/CaptureOverlay.tsx`
+  - `src/main/captureController.ts`
+  - `src/main/ipc.ts`
+  - `src/preload/index.ts`
+  - `src/renderer/global.d.ts`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+
+## 2026-04-18 00:47:48 | v2.6.5
+- 操作：P3 结构稳定化（默认配置集中化）
+- 本步完成：
+  - 新增 `src/shared/defaultSettings.ts`，收敛 App/Runtime 默认配置与 AI Hub 默认配置。
+  - `src/main/index.ts` 切换为复用共享默认配置，仅在主进程注入本机 `storageRoot`。
+  - `useDashboardSettings` 切换为共享默认配置，减少 renderer fallback 与主进程默认值漂移。
+  - `tests/settingsService.test.ts` 切换为共享默认配置，降低测试夹带过时默认值风险。
+  - 验证通过：`npm run check`（typecheck/build/test 全绿）。
+- 修改文件：
+  - `src/shared/defaultSettings.ts`
+  - `src/main/index.ts`
+  - `src/renderer/features/dashboard/shared/hooks/useDashboardSettings.ts`
+  - `tests/settingsService.test.ts`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+
+## 2026-04-18 00:42:09 | v2.6.5
+- 操作：P2 稳定基线修复（清理 typecheck/build/test 红线）
+- 本步完成：
+  - 修复 `server/src/sourcePersistence.ts` 的 `SummaryResult` 回退结构类型不匹配。
+  - 修复 `ModernAiHubView` 旧运行态字段访问（`runtimeStatus.local`）为当前结构字段。
+  - 修复 `AiHubSettings` 图标模块相对路径错误。
+  - 修复 `web/src/App.tsx` 中 `ENTRY_METHOD_LABEL` 缺失 `directory_scan`。
+  - 扩展 `PinStackIcon` 支持 `arrow-left` / `arrow-right`，并修复 `VaultKeeperView` 动画 variants 类型报错。
+  - `SettingsService` 改为继承传入默认 `vaultkeeper` 配置，避免硬编码覆盖。
+  - 修复 `captureController` telemetry payload 类型不兼容。
+  - 重建 AI 模型注册表为受控静态集合，补齐 `isRegisteredAiModel`、`isLocalOllamaModel`、`cloudSetupHint` 与状态文案规则，恢复相关单测预期。
+  - 验证通过：`npm run check`（typecheck/build/test 全绿）。
+- 修改文件：
+  - `server/src/sourcePersistence.ts`
+  - `src/renderer/features/dashboard/modern/ModernAiHubView.tsx`
+  - `src/renderer/features/dashboard/modern/settings/AiHubSettings.tsx`
+  - `src/renderer/features/dashboard/modern/VaultKeeperView.tsx`
+  - `src/renderer/design-system/icons.tsx`
+  - `web/src/App.tsx`
+  - `src/shared/ai/modelRegistry.ts`
+  - `src/main/settings.ts`
+  - `src/main/captureController.ts`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+
+## 2026-04-18 00:33:51 | v2.6.5
+- 操作：P1 基础一致性修复（版本标识统一 + 默认存储路径去机器化）
+- 本步完成：
+  - 主进程默认 `storageRoot` 改为 `~/PinStack`（`os.homedir()/PinStack`），并将共享设置文件统一为 `~/PinStack/settings.json`。
+  - `SettingsService` 的 VaultKeeper 默认 `projectRoot` 改为继承配置默认值（无配置时为空字符串），移除开发机绝对路径依赖。
+  - `README.md` 版本标识更新为 `v2.6.5`，开发启动路径示例改为通用 `"/path/to/Screen Pin"`。
+  - `docs/PROJECT_HANDOVER.md` 头部版本与“当前版本”同步到 `2.6.5`。
+  - VaultKeeper「目录直读」默认路径改为空，移除用户私有目录示例值。
+  - 同步更新 `CHANGELOG.md` 与 `WORKLOG.md`。
+- 修改文件：
+  - `src/main/index.ts`
+  - `src/main/settings.ts`
+  - `src/renderer/features/dashboard/modern/VaultKeeperView.tsx`
+  - `README.md`
+  - `docs/PROJECT_HANDOVER.md`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+
+## 2026-04-10 11:10:00 | v2.6.3
+- 操作：v2.6.3 AI 中枢前置与可选化升级（Provider 双路 + AI 对话 + AI-first 搜索）
+- 本步完成：
+  - 新增 AI 双路抽象服务：本地 provider 复用 local model、云端 provider 采用 cloud mock 占位。
+  - 新增 AI 运行态 IPC：`ai.runtime.status`、`ai.chat.session.get`、`ai.chat.send`、`ai.search.intent`。
+  - 新增右上角 AI 对话入口与轻量对话面板，支持本地持久会话与当前有效 provider/model 显示。
+  - 新增 AI-first 搜索开关，并在搜索输入时启用 AI 意图解析辅助筛选。
+  - 设置页 AI 中枢补齐：入口显示策略、默认 provider、AI-first、3 条 Persona 模板槽位启停。
+  - 设置页新增独立飞书连接检查区，形成 AI / 飞书附加能力独立配置。
+  - AI 入口显示策略落地到 TopBar 与 Sidebar：`always | enabled_only | hidden`。
+  - 控制面板 AI 视图新增 `AI 助手` 一级入口卡片与快捷动作。
+  - 版本升级到 `2.6.3` 并同步文档。
+- 修改文件（核心）：
+  - `src/shared/types.ts`
+  - `src/shared/ai/modelRegistry.ts`
+  - `src/main/services/aiHub/aiHubService.ts`
+  - `src/main/ipc.ts`
+  - `src/main/index.ts`
+  - `src/main/settings.ts`
+  - `src/preload/index.ts`
+  - `src/renderer/global.d.ts`
+  - `src/renderer/features/dashboard/modern/ModernTopBar.tsx`
+  - `src/renderer/features/dashboard/modern/ModernSidebar.tsx`
+  - `src/renderer/features/dashboard/modern/ModernDashboardView.tsx`
+  - `src/renderer/features/dashboard/modern/SettingsPanel.tsx`
+  - `src/renderer/features/dashboard/shared/dashboard.hooks.ts`
+  - `tests/settingsService.test.ts`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/PROJECT_HANDOVER.md`
+
+## 2026-04-10 09:35:00 | v2.6.0
+- 操作：AI 中枢升级收口（显性入口 + 规则驱动整理 + 受控模型切换）与二次封版打包
+- 本步完成：
+  - 新增 AI 显性入口：TopBar 右上角 `AI 中枢`、侧边栏一级导航 `AI 中枢（AI Hub）`。
+  - 设置页 `AI 中枢` 增加规则项：默认模型、仅建议模式、允许 fallback、命名模板、整理排序策略。
+  - 收藏页新增 `AI 整理素材库`，支持“预览建议 + 应用整理”基础流程，并按用户规则执行。
+  - 模型体系升级为受控注册：新增 `src/shared/ai/modelRegistry.ts`，支持注册式可扩展展示与切换。
+  - 本地模型服务支持受控本地模型切换与状态增强（`configuredModel / effectiveModel`），并维持 preflight/fallback 可观测。
+  - 统一主流程保护约束仍然成立：手改标题锁、dedupe 建议模式、summary 并行旁路。
+  - 执行验证：`npm run typecheck` 通过、`npm run test:unit` 109/109 通过、`npm run package` 通过并产出 DMG。
+- 本步明确没做：
+  - 未引入多模型自动路由、向量库、复杂 OCR、飞书主链路重构。
+- 修改文件（本步核心）：
+  - `src/shared/ai/modelRegistry.ts`
+  - `src/shared/ai/localModel/types.ts`
+  - `src/shared/types.ts`
+  - `src/main/services/localModel/localModelService.ts`
+  - `src/main/services/localModel/gemmaLocalProvider.ts`
+  - `src/main/services/localModel/mockLocalProvider.ts`
+  - `src/main/index.ts`
+  - `src/main/settings.ts`
+  - `src/renderer/features/dashboard/modern/SettingsPanel.tsx`
+  - `tests/localModelStorage.test.ts`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/PROJECT_HANDOVER.md`
+- 打包产物：
+  - `dist/PinStack-2.6.0-arm64.dmg`
+
+## 2026-04-10 08:20:00 | v2.6.0
+- 操作：封版实验交付（本地模型设置入口补全 + 版本统一 + DMG 打包）
+- 本步完成：
+  - 完成封版前检查：`npm run typecheck` 通过；单测主逻辑链路通过（个别 `ENOTEMPTY` 为临时目录清理波动，不属于功能回归）。
+  - 设置页新增「本地模型（Local Model）」模块，展示：
+    - 是否启用
+    - 配置模式（mock/real）
+    - 实际模式（mock/real）
+    - provider
+    - 模型名（固定 `gemma3:12b`）
+    - Ollama 地址
+    - 连接状态 / 模型安装状态
+    - 最近错误 / 最近检查时间
+    - 轻量刷新按钮
+  - 增加“模型切换”入口（当前仅保留 `gemma3:12b` 单选项），满足入口可见性，同时不破坏单模型约束。
+  - 新增本地模型状态查询链路：`settings.localModel.status` 与 `settings.localModel.model.set`（main/ipc/preload/renderer 全链路接通）。
+  - 版本号统一升级到 `2.6.0`（`package.json` / `package-lock.json` / 文档与应用内版本显示链路）。
+- 本步明确没做：
+  - 未引入第二模型、未做多模型路由。
+  - 未改动飞书同步主链路与 dedupe/summary 既定策略。
+- 下一步建议：
+  - 在目标实验机安装 `v2.6.0` DMG，验证设置页本地模型入口可见性与可理解性。
+  - 等 `gemma3:12b` 下载完成后，复跑 real 模式样本并补充真实质量报告。
+- 修改文件：
+  - `src/shared/ai/localModel/types.ts`
+  - `src/shared/types.ts`
+  - `src/main/services/localModel/localModelService.ts`
+  - `src/main/ipc.ts`
+  - `src/main/index.ts`
+  - `src/preload/index.ts`
+  - `src/renderer/global.d.ts`
+  - `src/renderer/features/dashboard/modern/SettingsPanel.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/PROJECT_HANDOVER.md`
+- 验证：
+  - `npm run typecheck` 通过
+  - `npm run package` 通过
+  - 打包产物确认生成：`dist/PinStack-2.6.0-arm64.dmg`
+
+## 2026-04-05 17:30:00 | v2.5.4
+- 操作：权限阻塞误判修复 + 打包启动白屏修复
+- 本步完成：
+  - 将权限状态中的“阻塞问题”和“仅诊断提示”拆开，新增 `blocking` 与 `hasBlockingIssues`，避免截图已可用时仍然继续弹权限提示。
+  - 将屏幕录制在“截图链路可用但系统状态滞后”的场景直接视为可用，不再继续把它映射成需要用户处理的硬阻塞。
+  - 将顶部状态芯片与权限弹窗都切到 `hasBlockingIssues`，仅在真正阻塞截图或主能力时才显示“需要权限”。
+  - 将 renderer 顶层入口从 `lazy + Suspense` 改为直接导入，移除打包环境里空白白屏 fallback 长时间停留的可能性。
+  - 产出 `docs/releases/v2.5.4-permission-blocking-and-startup-fix.md` 作为本次修复说明文档。
+- 本步明确没做：
+  - 没有继续处理 tray icon、Dock icon 或其它系统图标问题。
+  - 没有改动 Dashboard、Sidebar、TopBar、Capture Hub 的既有视觉语言。
+  - 没有扩展新的权限能力项或新增功能。
+- 残留问题清单：
+  - 权限详情页仍会展示辅助功能与自动化依赖的非阻塞诊断项，这是刻意保留的排查信息，不再驱动首页阻塞提示。
+  - 若后续仍有截图失败，应直接依据新增的可复制诊断日志定位 `screencapture` 或执行路径问题，而不是再泛化为权限未开。
+- 下一步建议：
+  - 用 `v2.5.4` 覆盖 `/Applications/PinStack.app` 后验证：能截图时不再弹权限阻塞提示，启动时不再出现白屏。
+- 修改文件：
+  - `src/shared/types.ts`
+  - `src/main/permissions.ts`
+  - `src/renderer/components/PermissionPrompt.tsx`
+  - `src/renderer/features/dashboard/modern/ModernTopBar.tsx`
+  - `src/renderer/App.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/VERSIONING.md`
+  - `docs/PROJECT_HANDOVER.md`
+  - `docs/releases/v2.5.4-permission-blocking-and-startup-fix.md`
+- 验证：
+  - `npm run typecheck` 通过
+  - `npm run build` 通过
+  - `npm run test` 通过
+
+## 2026-04-05 16:40:00 | v2.5.3
+- 操作：截图权限链路热修复
+- 本步完成：
+  - 将屏幕录制权限的真实可用性判断改成 `screencapture` 微探测优先，与 PinStack 自带截图的实际执行链路保持一致。
+  - 将 `desktopCapturer` 的探测从“主判定”降级为“辅助诊断”，不再要求必须拿到非空 thumbnail 才算可用。
+  - 将“系统状态未同步但截图实际可用”收口为 `requires-restart` 语义，同时允许继续截图，不再把用户硬卡死在权限页。
+  - 补齐权限诊断区，明确展示 `systemStatus / screenshotProbe / desktopProbe` 与各自错误信息。
+  - 产出 `docs/releases/v2.5.3-screenshot-permission-hotfix.md` 作为本次热修复说明文档。
+- 本步明确没做：
+  - 没有继续处理 tray icon、Dock icon 或其它系统图标问题。
+  - 没有改动 Dashboard、Sidebar、TopBar、Capture Hub 的既有视觉语言。
+  - 没有扩展新的权限能力项或新增功能。
+- 残留问题清单：
+  - 菜单栏图标和 Dock 图标问题不在本轮范围，仍维持 `v2.5.2` 状态。
+  - 若后续仍出现“系统权限已开但不可截图”，下一步应直接抓取 `screencapture` stderr 与 TCC 日志联合排查，而不是再回到 `desktopCapturer` 推断。
+- 下一步建议：
+  - 从 `/Applications/PinStack.app` 启动 `v2.5.3`，先验证自带截图是否恢复，再决定是否需要继续做图标链路或签名路线。
+- 修改文件：
+  - `src/shared/types.ts`
+  - `src/main/permissions.ts`
+  - `src/main/captureController.ts`
+  - `src/renderer/components/PermissionPrompt.tsx`
+  - `src/renderer/features/dashboard/modern/SettingsPanel.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/VERSIONING.md`
+  - `docs/PROJECT_HANDOVER.md`
+  - `docs/releases/v2.5.3-screenshot-permission-hotfix.md`
+- 验证：
+  - `npm run typecheck` 通过
+  - `npm run build` 通过
+  - `npm run test` 通过
+  - `npm run package` 通过
+  - 打包产物确认生成：`dist/PinStack-2.5.3-arm64.dmg`
+
+## 2026-04-04 23:40:00 | v2.5.2
+- 操作：系统集成稳定化修复（权限可信化 + Tray Icon + Dock Icon）
+- 本步完成：
+  - 将屏幕录制权限判断升级为“系统状态 + `desktopCapturer` 真实探测 + 实例诊断”的联合模型，不再只信单一系统状态。
+  - 将权限诊断区补充为可排查结构，展示安装路径稳定性、App 包路径、`systemStatus / probeStatus` 与实例指纹。
+  - 将 Capture Hub 的截图执行前置判断切到新的权限快照，状态滞后但探测可用时允许继续截图，并给轻提示。
+  - 替换 macOS 菜单栏 template 资产，修正顶部白块问题。
+  - 补齐运行时 Dock 图标候选路径到打包产物 `Contents/Resources/icon.icns`，统一正式 App Icon 链路。
+  - 产出 `docs/releases/v2.5.2-permission-and-icon-fix.md` 作为本次修复说明文档。
+- 本步明确没做：
+  - 没有新增产品功能。
+  - 没有改动 Dashboard、卡片或 Capture Hub 的已确认视觉语言。
+  - 没有引入代码签名或新的发布流程。
+- 残留问题清单：
+  - 仍需在真实目标机器上，以 `/Applications/PinStack.app` 为准做一次最终人工验收，确认权限刷新、菜单栏图标和 Dock/Finder/Cmd+Tab 图标表现。
+  - 当前仍是无签名前提，macOS 的实例差异问题只能被明确诊断，不能从根本上消除。
+- 下一步建议：
+  - 以 `v2.5.2` 作为稳定修复基线继续真实使用，再决定是否进入签名与更正式的发布流程。
+- 修改文件：
+  - `src/shared/types.ts`
+  - `src/main/permissions.ts`
+  - `src/main/captureController.ts`
+  - `src/main/index.ts`
+  - `src/main/ipc.ts`
+  - `src/main/tray.ts`
+  - `src/main/failureFeedback.ts`
+  - `src/preload/index.ts`
+  - `src/renderer/CaptureHub.tsx`
+  - `src/renderer/components/PermissionPrompt.tsx`
+  - `src/renderer/features/dashboard/modern/SettingsPanel.tsx`
+  - `assets/icons/tray/pinstack-menubar-icon.svg`
+  - `assets/icons/tray/pinstack-menubar-template.png`
+  - `assets/icons/tray/pinstack-menubar-template@2x.png`
+  - `package.json`
+  - `package-lock.json`
+  - `README.md`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/VERSIONING.md`
+  - `docs/PROJECT_HANDOVER.md`
+  - `docs/releases/v2.5.2-permission-and-icon-fix.md`
+- 验证：
+  - `npm run check` 通过
+  - `npm run package` 通过
+  - 打包产物确认生成：`dist/PinStack-2.5.2-arm64.dmg`
+  - 发布包内确认存在：
+    - `Contents/Resources/icon.icns`
+    - `Contents/Resources/scripts/get-frontmost-app.swift`
+    - `app.asar` 内 `assets/icons/tray/pinstack-menubar-template.png`
+    - `app.asar` 内 `assets/icons/tray/pinstack-menubar-template@2x.png`
+
+## 2026-04-05 00:08:00 | v2.5.0
+- 操作：封版发布（Release Step）
+- 本步完成：
+  - 将工程版本从 `v2.4.9` 提升到 `v2.5.0`，不混入任何功能、交互或视觉改动。
+  - 同步 final `CHANGELOG`、`WORKLOG`、`PROJECT_HANDOVER` 与控制面板运行时版本来源。
+  - 执行 `npm run check` 与 DMG 打包，产出可供 1 周高频真实使用体验的封版版本。
+- 本步明确没做：
+  - 没有新增功能。
+  - 没有调整任何 UI、交互、逻辑或品牌资产。
+  - 没有顺手修其它问题。
+- 残留问题清单：
+  - 下一阶段应基于 `v2.5.0` 的真实使用结果再决定 `3.0` 路线，不再继续对 `2.5.0` 混入开发性调整。
+- 下一步建议：
+  - 安装 `v2.5.0` DMG，在工作电脑上进行 1 周高频真实使用体验，沉淀 `3.0` 路线问题清单。
+- 修改文件：
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/PROJECT_HANDOVER.md`
+- 验证：
+  - `npm run check`
+  - `npm run package`
+
+## 2026-04-04 23:55:00 | v2.4.9
+- 操作：Patch 更新（2.4.x Step 10：文档、品牌、交付面最终收口）
+- 本步完成：
+  - 冻结 App Icon / menubar / floating-button 三端品牌资产，并将当前运行目录与 `design-system/approved_assets` 的来源关系写入最终品牌规范文档。
+  - 统一 Settings、Help、Capture Hub 的面板内品牌 eyebrow 表达，收口为同一套 `PinStack + 面板职责` 语法。
+  - 同步 README、版本文档、交接文档与控制面板版本链路到 `v2.4.9`，使产品、文档、版本表达一致。
+- 本步明确没做：
+  - 没有新增任何产品功能。
+  - 没有改动主结构、主流程或视觉保护区中的整体气质。
+  - 没有顺手重做图标样式，只冻结当前确认方案。
+- 残留问题清单：
+  - 下一步只剩 `v2.5.0` 封版与 DMG 打包，不再继续功能或结构调整。
+  - 若要继续推进到 `3.0`，应基于这一版做真实一周使用体验后再立下一轮路线图。
+- 下一步建议：
+  - 进入 `v2.5.0`：封版、最终回归、DMG 交付。
+- 修改文件：
+  - `src/renderer/features/dashboard/modern/SettingsPanel.tsx`
+  - `src/renderer/features/dashboard/modern/HelpPanel.tsx`
+  - `src/renderer/CaptureHub.tsx`
+  - `assets/icons/README.md`
+  - `design-system/README.md`
+  - `design-system/01_Brand_Icons/approved_assets/README.md`
+  - `design-system/01_Brand_Icons/BRAND_ASSET_SPEC.md`
+  - `package.json`
+  - `package-lock.json`
+  - `README.md`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/VERSIONING.md`
+  - `docs/PROJECT_HANDOVER.md`
+- 验证：
+  - `npm run typecheck`
+  - `npm run build`
+
+## 2026-04-04 23:20:00 | v2.4.8
+- 操作：Patch 更新（2.4.x Step 9：分发稳定性与多环境适配）
+- 本步完成：
+  - 将桌面悬浮入口的可视区域基线收口为显示器 `workArea`，确保在 Dock、菜单栏、多显示器与分辨率变化环境下边界判断一致。
+  - 补齐显示器 `metrics-changed / added / removed` 处理，使桌面入口与 Dashboard 在显示环境变化后继续落在有效可视区域内。
+  - 将前台应用识别用的 Swift helper 作为发布资源打入应用包，并优先从 `process.resourcesPath` 读取，补齐 DMG / 非开发目录运行稳定性。
+  - 同步版本号、变更记录、交接文档与控制面板版本显示到 `v2.4.8`。
+- 本步明确没做：
+  - 没有顺手改动 Dashboard、Capture Hub、卡片或 Settings 的视觉。
+  - 没有扩展新的产品功能，也没有提前进入文档/品牌最终收口。
+- 残留问题清单：
+  - `v2.4.9` 仍需完成文档、品牌表达与最终交付面冻结。
+  - DMG 首次安装体验已补到运行资源层，但最终交付文案与品牌一致性仍待下一步统一。
+- 下一步建议：
+  - 进入 `v2.4.9`：文档、品牌、交付面最终收口。
+- 修改文件：
+  - `src/main/sourceApp.ts`
+  - `src/main/captureController.ts`
+  - `src/main/dashboardWindowController.ts`
+  - `src/main/index.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/VERSIONING.md`
+  - `docs/PROJECT_HANDOVER.md`
+- 验证：
+  - `npm run check`
+  - `npm run package`
+
+## 2026-04-04 21:15:00 | v2.4.7
+- 操作：Patch 更新（2.4.x Step 8：记录整理链路补完）
+- 本步完成：
+  - 将四类卡片的高频整理链路统一为直接一级动作：复制、编辑、归类、外部打开、删除。
+  - 保持归类选择器为单层分类选择器，并沿用即时更新标签与视图同步逻辑。
+  - 保持收藏、Re-Pin、编辑、复制等动作位继续可执行，补齐“外部打开”作为再使用链路的一环。
+  - 同步版本号、变更记录、交接文档与控制面板版本显示到 `v2.4.7`。
+- 本步明确没做：
+  - 没有新增 per-card 标签编辑器，没有扩展新的整理功能。
+  - 没有重刷卡片视觉，也没有改动 Dashboard / Capture Hub / Settings / Help。
+  - 没有引入新的二级菜单或新功能层级。
+- 残留问题清单：
+  - 标签的单卡片级编辑入口仍未建立，当前仍以标签展示、顶部标签筛选和批量标签整理为主。
+  - 分发稳定性与多环境适配仍待 `v2.4.8` 统一处理。
+- 下一步建议：
+  - 进入 `v2.4.8`：分发稳定性与多环境适配。
+- 修改文件：
+  - `src/renderer/features/dashboard/modern/ModernRecordCardText.tsx`
+  - `src/renderer/features/dashboard/modern/ModernRecordCardImage.tsx`
+  - `src/renderer/features/dashboard/modern/ModernRecordCardFlow.tsx`
+  - `src/renderer/features/dashboard/modern/ModernRecordCardVideo.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/VERSIONING.md`
+  - `docs/PROJECT_HANDOVER.md`
+- 验证：
+  - `npm run typecheck`
+  - `npm run build`
+  - `npm run test`
+
+## 2026-04-04 20:05:00 | v2.4.6
+- 操作：Patch 更新（2.4.x Step 7：搜索 / 筛选 / 导航心智收口）
+- 本步完成：
+  - 将 TopBar 顶部 chips 收口为真实筛选条件的唯一表达来源，不再重复表达当前导航视图。
+  - 将 AI 工作区子分类的表达彻底交回左侧导航，顶部不再出现“当前 AI 子分类”的重复 chips。
+  - 将“清空全部”调整为只清来源、类型、标签等真实筛选条件，不再干预导航状态。
+  - 同步版本号、变更记录、交接文档与控制面板版本显示到 `v2.4.6`。
+- 本步明确没做：
+  - 没有重做 Sidebar / TopBar / Dashboard 总体框架。
+  - 没有恢复任何常驻横条状态提示。
+  - 没有触碰视觉保护区的整体气质，只收口表达来源。
+- 残留问题清单：
+  - AI 工作区父级展开/收起与当前子分类高亮的更细心智，仍可在后续步骤继续观察，但不属于本步阻塞问题。
+  - 搜索、导航、筛选的表达来源已经收口，但记录整理链路的一致性仍待 `v2.4.7` 继续补完。
+- 下一步建议：
+  - 进入 `v2.4.7`：记录整理链路补完。
+- 修改文件：
+  - `src/renderer/features/dashboard/modern/ModernTopBar.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/VERSIONING.md`
+  - `docs/PROJECT_HANDOVER.md`
+- 验证：
+  - `npm run typecheck`
+  - `npm run build`
+  - `npm run test`
+
+## 2026-04-04 18:10:00 | v2.4.5
+- 操作：Patch 更新（2.4.x Step 6：设置系统补完）
+- 本步完成：
+  - 将 `默认打开到` 真正接入 Dashboard 打开链路，控制面板每次显示时按设置值恢复默认视图。
+  - 将 `默认截图尺寸` 真正接入 Capture Hub 打开链路，按设置值初始化自由/固定尺寸模式与默认宽高。
+  - 补齐 Settings 中各项的生效边界说明，明确区分“立即生效 / 下次打开生效 / 下次登录生效”。
+  - 为快捷键修改补齐本地重复冲突与保留组合键冲突校验，并保持保存后立即重绑。
+  - 同步版本号、变更记录、交接文档与控制面板版本显示到 `v2.4.5`。
+- 本步明确没做：
+  - 没有改动 Settings 的整体视觉气质和布局结构。
+  - 没有扩展新的设置项，也没有跨步处理搜索、导航或分发稳定性问题。
+  - 没有修改已确认的 Dashboard / Capture Hub 外观，只补齐接线与边界说明。
+- 残留问题清单：
+  - 低频设置项的完整接线与行为解释仍有继续细化空间，但已不属于本步主范围。
+  - 多环境首次安装与新机器路径验证仍待 `v2.4.8` 统一处理。
+- 下一步建议：
+  - 进入 `v2.4.6`：搜索 / 筛选 / 导航心智收口。
+- 修改文件：
+  - `src/main/dashboardWindowController.ts`
+  - `src/main/captureController.ts`
+  - `src/preload/index.ts`
+  - `src/renderer/global.d.ts`
+  - `src/renderer/features/dashboard/shared/dashboard.hooks.ts`
+  - `src/renderer/CaptureHub.tsx`
+  - `src/renderer/features/dashboard/modern/SettingsPanel.tsx`
+  - `tests/settingsService.test.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/VERSIONING.md`
+  - `docs/PROJECT_HANDOVER.md`
+- 验证：
+  - `npm run typecheck`
+  - `npm run build`
+  - `npm run test`
+
+## 2026-04-04 16:25:00 | v2.4.4
+- 操作：Patch 更新（2.4.x Step 5：异常与失败体验补完）
+- 本步完成：
+  - 新增统一失败反馈模块，将高频失败路径收敛为“轻提示 / 阻塞提示 / 引导下一步”三类输出。
+  - 截图失败、录屏入库失败、权限未开、OCR 失败、原文件缺失与快捷键注册失败已接入明确反馈与下一步引导。
+  - 控制面板与设置面板版本显示改为运行时从主进程读取，避免文档、工程版本与界面显示脱节。
+  - 同步版本号、变更记录、交接文档与控制面板版本来源到 `v2.4.4`。
+- 本步明确没做：
+  - 没有修改 Dashboard、Sidebar、TopBar、卡片系统或 Capture Hub 的整体视觉。
+  - 没有扩展新的失败场景范围，只覆盖本步指定的高频路径。
+  - 没有重构设置系统和主框架逻辑。
+- 残留问题清单：
+  - 设置系统中“即时生效 / 重启生效”的边界仍待 `v2.4.5` 收口。
+  - 非高频异常场景仍未统一纳入失败反馈分级体系。
+- 下一步建议：
+  - 进入 `v2.4.5`：设置系统补完。
+- 修改文件：
+  - `src/shared/types.ts`
+  - `src/main/failureFeedback.ts`
+  - `src/main/ocrService.ts`
+  - `src/main/storage.ts`
+  - `src/main/ipc.ts`
+  - `src/main/captureController.ts`
+  - `src/main/index.ts`
+  - `src/renderer/CaptureHub.tsx`
+  - `src/renderer/version.ts`
+  - `src/renderer/features/dashboard/modern/ModernSidebar.tsx`
+  - `src/renderer/features/dashboard/modern/SettingsPanel.tsx`
+  - `src/preload/index.ts`
+  - `src/renderer/global.d.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/VERSIONING.md`
+  - `docs/PROJECT_HANDOVER.md`
+- 验证：
+  - `npm run typecheck`
+  - `npm run build`
+  - `npm run test`
+
+## 2026-04-04 14:35:00 | v2.4.3
+- 操作：Patch 更新（2.4.x Step 4：Capture Hub 稳定化）
+- 本步完成：
+  - 冻结桌面悬浮按钮到 Capture Hub 首次出现的反馈链路，统一桌面入口与面板出现的体感。
+  - 固定自由/固定尺寸切换参数，并将固定尺寸模式拆成可滚动内容区与固定执行区，避免底部操作被裁切。
+  - Capture Hub 高度上报与窗口定位逻辑进一步收口，去除首次显示时对原生窗口动画的依赖。
+  - 同步版本号、变更记录、交接文档与控制面板版本来源到 `v2.4.3`。
+- 本步明确没做：
+  - 没有重做 Capture Hub 视觉语言，没有跨界改动 Dashboard、卡片系统、Settings / Help。
+  - 没有扩展录屏功能边界，也没有顺手继续调整其它桌面入口样式。
+- 残留问题清单：
+  - 失败与异常体验仍待 `v2.4.4` 系统补完。
+  - 设置系统中部分值的即时生效/重启生效边界仍待 `v2.4.5` 收口。
+- 下一步建议：
+  - 进入 `v2.4.4`：异常与失败体验补完。
+- 修改文件：
+  - `src/renderer/CaptureHub.tsx`
+  - `src/main/captureController.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/VERSIONING.md`
+  - `docs/PROJECT_HANDOVER.md`
+- 验证：
+  - `npm run typecheck`
+  - `npm run build`
+  - `npm run test`
+
+## 2026-04-04 11:40:00 | v2.4.2
+- 操作：Patch 更新（2.4.x Step 3：卡片系统彻底定型）
+- 本步完成：
+  - 新增共享卡片语法组件，统一四类卡片的头部、标签区、辅助信息区与底部动作区。
+  - 将文本、图片、Flow、视频卡片收敛到同一套标题/标签/动作规则，标题继续只表达内容名称。
+  - 统一内容类型标签规则：文本/Flow 使用 subtype，图片显示 `IMAGE`，视频显示 `VIDEO`。
+  - 同步版本号、变更记录、交接文档与控制面板版本来源到 `v2.4.2`。
+- 本步明确没做：
+  - 没有重刷卡片整体视觉气质，没有改动你已确认的卡片总体外观。
+  - 没有修改 Capture Hub、主框架、Settings / Help 或主进程结构。
+  - 没有新增新的卡片交互层级，只收敛已存在语法。
+- 残留问题清单：
+  - Capture Hub 仍需在 `v2.4.3` 做稳定化，冻结动效参数与桌面入口体感。
+  - 失败体验、设置系统补完、多环境适配仍按后续 step 推进，本步不顺手处理。
+- 下一步建议：
+  - 进入 `v2.4.3`：Capture Hub 稳定化。
+- 修改文件：
+  - `src/renderer/features/dashboard/modern/ModernRecordCardParts.tsx`
+  - `src/renderer/features/dashboard/modern/ModernRecordCardText.tsx`
+  - `src/renderer/features/dashboard/modern/ModernRecordCardImage.tsx`
+  - `src/renderer/features/dashboard/modern/ModernRecordCardFlow.tsx`
+  - `src/renderer/features/dashboard/modern/ModernRecordCardVideo.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/VERSIONING.md`
+  - `docs/PROJECT_HANDOVER.md`
+- 验证：
+  - `npm run typecheck`
+  - `npm run build`
+  - `npm run test`
+
+## 2026-04-04 10:00:00 | v2.4.1
+- 操作：Patch 更新（2.4.x Step 2：全局弹层系统统一）
+- 本步完成：
+  - 新增共享 anchored-layer 机制，统一弹层锚点定位、翻转、碰撞避让与最上层渲染方式。
+  - 将顶部状态菜单、Pin Behavior 菜单、Settings、Help、卡片动作菜单与归类选择器迁移到同一套弹层系统。
+  - 将 Settings / Help 面板自身收敛为内容壳层，定位与外部关闭逻辑由共享弹层层处理。
+  - 同步版本号、变更记录、交接文档与控制面板版本来源到 `v2.4.1`。
+- 本步明确没做：
+  - 没有重做 Dashboard、Sidebar、TopBar 或卡片的整体视觉风格。
+  - 没有扩展新功能菜单，也没有改变既有业务逻辑。
+  - 没有触碰视觉保护区的整体审美方向，只修层级、定位、遮挡与壳层一致性。
+- 残留问题清单：
+  - 卡片系统仍需在 `v2.4.2` 做最终语法冻结，避免继续产生例外排版。
+  - Capture Hub 作为独立桌面工具入口，仍需在 `v2.4.3` 做体感与状态稳定化。
+- 下一步建议：
+  - 进入 `v2.4.2`：卡片系统彻底定型。
+- 修改文件：
+  - `src/renderer/components/AnchoredLayer.tsx`
+  - `src/renderer/features/dashboard/modern/ModernTopBar.tsx`
+  - `src/renderer/features/dashboard/modern/ModernRecordActionMenu.tsx`
+  - `src/renderer/features/dashboard/modern/ModernUseCasePicker.tsx`
+  - `src/renderer/features/dashboard/modern/SettingsPanel.tsx`
+  - `src/renderer/features/dashboard/modern/HelpPanel.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/VERSIONING.md`
+  - `docs/PROJECT_HANDOVER.md`
+- 验证：
+  - `npm run typecheck`
+  - `npm run build`
+  - `npm run test`
+
+## 2026-04-03 18:20:00 | v2.4.0
+- 操作：Minor 更新（2.4.x Step 1：主进程拆层）
+- 本步完成：
+  - 将主进程入口从“单一总控文件”拆分为更清晰的模块职责：
+    - `src/main/appScope.ts`
+    - `src/main/dashboardWindowController.ts`
+    - `src/main/captureController.ts`
+    - `src/main/shortcutManager.ts`
+  - 将 `src/main/index.ts` 收敛为应用编排入口，保留启动、服务装配、生命周期与少量共享编排逻辑。
+  - 同步版本号、变更记录、交接文档与控制面板版本来源到 `v2.4.0`。
+- 本步明确没做：
+  - 没有修改 IPC 协议。
+  - 没有修改任何 UI 视觉、动效或交互布局。
+  - 没有触碰 Visual Protection Rule 定义的视觉保护区。
+- 残留问题清单：
+  - 全局弹层系统仍待在 `v2.4.1` 统一，包括 anchored popover 的 flip / collision / 避让策略。
+  - 卡片系统、Capture Hub 体感与失败体验仍按后续 step 逐步收口，本步不顺手处理。
+- 下一步建议：
+  - 进入 `v2.4.1`：全局弹层系统统一。
+- 修改文件：
+  - `src/main/index.ts`
+  - `src/main/appScope.ts`
+  - `src/main/dashboardWindowController.ts`
+  - `src/main/captureController.ts`
+  - `src/main/shortcutManager.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/VERSIONING.md`
+  - `docs/PROJECT_HANDOVER.md`
+- 验证：
+  - `npm run typecheck` 通过
+  - `npm run build` 通过
+  - `npm run test` 通过
+
+## 2026-04-03 15:10:00 | v2.3.4
+- 操作：Patch 更新（UI 大换代 Step 4：全局 Token / 组件体系固化）
+- 备注：
+  - 在 `src/renderer/styles.css` 中建立统一 token 源，固化颜色、圆角、间距、字号、阴影与控件高度。
+  - 收敛共享组件基类：Button、Input、Card、Panel、Badge、Tabs / Segmented、Dropdown、Sidebar item。
+  - 将 TopBar、Sidebar、Settings、Help、Onboarding、Capture Hub 与卡片菜单壳层映射到同一套组件语言，减少局部散写样式。
+  - 版本号同步更新到 `2.3.4`。
+- 修改文件：
+  - `src/renderer/styles.css`
+  - `src/renderer/ToggleSwitch.tsx`
+  - `src/renderer/features/dashboard/modern/ModernDashboardView.tsx`
+  - `src/renderer/features/dashboard/modern/ModernSidebar.tsx`
+  - `src/renderer/features/dashboard/modern/ModernTopBar.tsx`
+  - `src/renderer/features/dashboard/modern/SettingsPanel.tsx`
+  - `src/renderer/features/dashboard/modern/HelpPanel.tsx`
+  - `src/renderer/components/FirstLaunchGuide.tsx`
+  - `src/renderer/CaptureHub.tsx`
+  - `src/renderer/features/dashboard/modern/ModernRecordActionMenu.tsx`
+  - `src/renderer/features/dashboard/modern/ModernRecordQuickActions.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：
+  - `npm run typecheck`
+  - `npm run build`
+
+## 2026-04-03 13:35:00 | v2.3.3
+- 操作：Patch 更新（UI 大换代 Step 3：Settings / Help / Onboarding 理解层统一）
+- 备注：
+  - Settings Panel 收敛为更接近系统偏好设置的结构：Header 减重，section 之间通过留白建立秩序，row 统一为“标题 + 说明 + 右控件”。
+  - Help Panel 收敛为更偏阅读的帮助面板：左侧轻导航，右侧正文列限制在更舒适的阅读宽度内，默认仍进入“怎么开始”。
+  - Onboarding 保持 3 步结构与既有逻辑，但整体视觉更轻，一屏一重点，继续强化“复制 / 截图 → 自动保存 → 再次使用”的主心智。
+  - 版本号同步更新到 `2.3.3`。
+- 修改文件：
+  - `src/renderer/features/dashboard/modern/SettingsPanel.tsx`
+  - `src/renderer/features/dashboard/modern/HelpPanel.tsx`
+  - `src/renderer/components/FirstLaunchGuide.tsx`
+  - `src/renderer/styles.css`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：
+  - `npm run typecheck` 通过
+  - `npm run build` 通过
+
+## 2026-04-03 12:20:00 | v2.3.2
+- 操作：Patch 更新（AI 工作区闭合 + 子界面风格统一）
+- 备注：
+  - Sidebar 中的 AI 工作区改为默认闭合，父级入口支持展开/收起，子项按需显示。
+  - 删除左下角常驻帮助区，仅保留轻量版本信息块，减少左栏首屏说明性内容。
+  - Settings、Help、Capture Hub、桌面悬浮按钮与桌面小卡片统一到同一套浅玻璃系统语言。
+  - 附属面板的圆角、描边、阴影、文字层级与控件节奏向主控制面板对齐，减少“独立小工具窗”割裂感。
+- 修改文件：
+  - `src/renderer/features/dashboard/modern/ModernSidebar.tsx`
+  - `src/renderer/features/dashboard/modern/SettingsPanel.tsx`
+  - `src/renderer/features/dashboard/modern/HelpPanel.tsx`
+  - `src/renderer/CaptureLauncher.tsx`
+  - `src/renderer/CaptureHub.tsx`
+  - `src/renderer/styles.css`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：
+  - `npm run typecheck` 通过
+  - `npm run build` 通过
+
+## 2026-04-03 11:25:00 | v2.3.1
+- 操作：Patch 更新（UI 大换代 Step 2：Sidebar / TitleBar / TopBar 主框架统一）
+- 备注：
+  - Dashboard 收敛为单一大圆角主容器，外层阴影与边框减重。
+  - Sidebar 固定为轻量导航层，选中态与 AI 工作区展开区统一降重。
+  - TitleBar 与 TopBar 的职责进一步分层：TitleBar 负责窗口信息，TopBar 负责 toolbar 操作。
+  - Search、Mode、Status、Pin Behavior、Size 统一为一套更克制的工具栏控件风格。
+  - 当前视图信息收敛进 TopBar，移除 Main 顶部独立信息栏，释放内容区首屏空间。
+- 修改文件：
+  - `src/renderer/features/dashboard/container/DashboardContainer.tsx`
+  - `src/renderer/features/dashboard/modern/ModernDashboardView.tsx`
+  - `src/renderer/features/dashboard/modern/ModernTopBar.tsx`
+  - `src/renderer/features/dashboard/modern/ModernSidebar.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：
+  - `npm run typecheck` 通过
+  - `npm run build` 通过
+
+## 2026-04-03 10:35:00 | v2.3.0
+- 操作：Minor 更新（Pinned Card / 轻浮层 Phase 1 重构）
+- 备注：
+  - 将 Pinned Card 从厚操作条结构收敛为轻量 `HeaderRow + ContentBody`。
+  - 左侧元信息只保留 `文本/图片` 与 `已固定/未固定` 两个状态 pill。
+  - 右侧操作区改为弱存在感 icon buttons，保留复制、取消固定、关闭原有行为。
+  - 文本内容区移除强制撑满的大盒子处理，改为更接近内容驱动的阅读块。
+  - Pinned Card 容器边框、阴影、背景与圆角同步减重，对齐 `PinStackDesignSkill` Phase 1。
+- 修改文件：
+  - `src/renderer/PinCardView.tsx`
+  - `src/renderer/PinView.tsx`
+  - `src/renderer/styles.css`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：
+  - `npm run typecheck` 通过
+  - `npm run build` 通过
+
+## 2026-04-02 22:18:00 | v2.2.1
+- 操作：Patch 更新（Capture Hub 操作优先型改版 + 版本留痕同步）
+- 备注：
+  - 将 Capture Hub 从“说明型设置面板”收敛为“操作优先型面板”。
+  - 默认模式改为“自由截图”，固定尺寸相关设置改为按需显示。
+  - 新增固定比例显式入口：`1:1 / 4:3 / 16:9 / 9:16`。
+  - 顶部区收敛为主标题、PNG、关闭按钮，权限区降为轻状态提示。
+  - 主操作按钮改为“开始截图 / 开始录屏”双入口，录屏按钮提供明确反馈。
+  - 文档与工程版本同步更新到 `2.2.1`。
+- 修改文件：
+  - `src/main/index.ts`
+  - `src/main/ipc.ts`
+  - `src/preload/index.ts`
+  - `src/shared/types.ts`
+  - `src/renderer/CaptureHub.tsx`
+  - `src/renderer/CaptureOverlay.tsx`
+  - `src/renderer/CaptureLauncher.tsx`
+  - `src/renderer/captureSelection.ts`
+  - `src/renderer/global.d.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `README.md`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/VERSIONING.md`
+  - `docs/PROJECT_HANDOVER.md`
+- 验证：
+  - `npm run typecheck` 通过
+  - `npm run build` 通过
+
+## 2026-04-02 21:40:00 | v2.2.0
+- 操作：Minor 更新（Capture Hub + 精确截图阶段）
+- 备注：
+  - 新增桌面悬浮入口与 Capture Hub 深色玻璃面板。
+  - 截图能力升级为面板驱动：自由框选、固定尺寸、固定比例。
+  - Overlay 选区算法独立成模块，支持：
+    - 当前活动屏处理
+    - Retina `scaleFactor` 换算
+    - 固定尺寸中心跟随
+    - Enter 确认 / Esc 取消
+    - Shift 比例锁定 / Alt 模式切换
+  - 新增最近尺寸、常用尺寸、自定义宽高入口。
+  - 文档与版本体系同步更新到 `2.2.0`。
+- 修改文件：
+  - `src/main/index.ts`
+  - `src/main/ipc.ts`
+  - `src/main/permissions.ts`
+  - `src/main/settings.ts`
+  - `src/main/ruleEngine.ts`
+  - `src/preload/index.ts`
+  - `src/shared/types.ts`
+  - `src/renderer/App.tsx`
+  - `src/renderer/CaptureLauncher.tsx`
+  - `src/renderer/CaptureHub.tsx`
+  - `src/renderer/CaptureOverlay.tsx`
+  - `src/renderer/captureSelection.ts`
+  - `src/renderer/global.d.ts`
+  - `README.md`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `docs/VERSIONING.md`
+  - `docs/PROJECT_HANDOVER.md`
+  - `package.json`
+  - `package-lock.json`
+- 验证：
+  - `npm run typecheck` 通过
+  - `npm run build` 通过
+
+## 2026-03-30 01:22:05 | v2.1.1
+- 操作：Minor + Patch 合并发布（版本提升、文档留痕、DMG 打包）
+- 备注：
+  - 将工程版本从 `1.0.28` 升级到 `2.1.1`（对齐 2.x 资产化阶段与近期功能增量）。
+  - 补齐“相对 2.0.0”的更新留痕：
+    - 推荐系统（Recommended）
+    - 行为埋点（`lastUsedAt/useCount`）
+    - 一键复用系统（Optimize / Rewrite + 预览替换）
+    - 3 屏新手引导（Onboarding）
+    - Dashboard 单 UI 收敛与交互细节修复
+  - 生成可跨电脑体验的 DMG 安装包（不影响本机源码目录）。
+- 修改文件：
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `README.md`
+  - `docs/PROJECT_HANDOVER.md`
+  - `docs/VERSIONING.md`
+- 验证：
+  - `npm run package`（build + electron-builder dmg）
+  - 产物：`dist/*.dmg`
+
+## 2026-03-29 22:20:46 | v1.0.28
+- 操作：手动 Patch 更新（执行 typecheck / build）
+- 备注：
+  - useCase 侧栏样式调整为仿 Search 输入框的玻璃卡片风格（`glass-surface glass-l3`）。
+  - 为每个分类项补充低优先级边框，边框强度低于下方 `Auto Pin` 区块。
+  - 保留分类色相区分，仅降低边框与底色的视觉侵入度。
+- 修改文件：
+  - `src/renderer/features/dashboard/shared/useCasePalette.ts`
+  - `src/renderer/features/dashboard/modern/ModernSidebar.tsx`
+  - `src/renderer/Sidebar.tsx`
+  - `README.md`
+  - `docs/PROJECT_HANDOVER.md`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `package.json`
+  - `package-lock.json`
+- 验证：
+  - `npm run typecheck` 通过
+  - `npm run build` 通过
+
+## 2026-03-29 22:17:55 | v1.0.27
+- 操作：手动 Patch 更新（执行 typecheck / test / build）
+- 备注：
+  - 新增 useCase 统一配色映射：采用 20% 饱和度纯色区分 Prompt/Output/Fix/Flow/Reference/Unclassified。
+  - Dashboard 侧栏分类项改为颜色区分（legacy/modern 同步）。
+  - 记录卡片 `useCase` 标签改为颜色徽标（legacy/modern 同步）。
+  - 控制面板默认固定：每次打开 Dashboard 时自动设为置顶固定。
+  - 增加 `dashboard.isAlwaysOnTop` IPC，前端打开/聚焦时同步置顶状态，避免按钮状态漂移。
+- 修改文件：
+  - `src/renderer/features/dashboard/shared/useCasePalette.ts`（新增）
+  - `src/renderer/Sidebar.tsx`
+  - `src/renderer/features/dashboard/modern/ModernSidebar.tsx`
+  - `src/renderer/features/dashboard/legacy/LegacyRecordCard.tsx`
+  - `src/renderer/features/dashboard/modern/ModernRecordCardText.tsx`
+  - `src/renderer/features/dashboard/modern/ModernRecordCardImage.tsx`
+  - `src/renderer/features/dashboard/modern/ModernRecordCardFlow.tsx`
+  - `src/main/index.ts`
+  - `src/main/ipc.ts`
+  - `src/preload/index.ts`
+  - `src/renderer/global.d.ts`
+  - `src/renderer/features/dashboard/shared/dashboard.hooks.ts`
+  - `README.md`
+  - `docs/PROJECT_HANDOVER.md`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `package.json`
+  - `package-lock.json`
+- 验证：
+  - `npm run typecheck` 通过
+  - `npm run test` 通过（34/34）
+  - `npm run build` 通过
+
+## 2026-03-29 22:08:10 | v1.0.26
+- 操作：手动 Patch 更新（执行 typecheck / test / build / check / dev 启动验证）
+- 备注：
+  - 实现 PinStack 2.0 Phase A（本地能力）：新增 `useCase + tags` 数据模型并兼容保留 `category`。
+  - 存储层升级：历史记录迁移、规则分类（prompt/output/fix/flow/reference/unclassified）、检索维度扩展、稳定排序规则。
+  - IPC/Preload 升级：新增 `records.meta.update` 与 `records.meta.bulkUpdate`。
+  - Dashboard 升级：
+    - 侧栏切换为 useCase 视图（All/Prompt/Output/Fix/Flow/Reference/Unclassified）
+    - 卡片支持单条设置 useCase
+    - 批量支持设置 useCase、批量新增/移除 tags
+  - 新增与更新测试：覆盖分类规则、检索组合、排序稳定、迁移与元数据更新。
+  - 开发态启动验证通过：`npm run dev` 可拉起（已手动释放占用端口进程）。
+- 修改文件：
+  - `src/shared/types.ts`
+  - `src/main/storage.ts`
+  - `src/main/ipc.ts`
+  - `src/preload/index.ts`
+  - `src/renderer/global.d.ts`
+  - `src/renderer/features/dashboard/shared/dashboard.types.ts`
+  - `src/renderer/features/dashboard/shared/dashboard.hooks.ts`
+  - `src/renderer/features/dashboard/shared/dashboard.selectors.ts`
+  - `src/renderer/features/dashboard/modern/ModernSidebar.tsx`
+  - `src/renderer/features/dashboard/modern/ModernDashboardView.tsx`
+  - `src/renderer/features/dashboard/modern/ModernRecordCardText.tsx`
+  - `src/renderer/features/dashboard/modern/ModernRecordCardImage.tsx`
+  - `src/renderer/features/dashboard/modern/ModernRecordCardFlow.tsx`
+  - `src/renderer/features/dashboard/legacy/LegacyDashboardView.tsx`
+  - `src/renderer/features/dashboard/legacy/LegacyRecordCard.tsx`
+  - `src/renderer/Sidebar.tsx`
+  - `src/renderer/naming.ts`
+  - `src/renderer/QuickPanel.tsx`
+  - `src/renderer/RecordItem.tsx`
+  - `tests/storageService.test.ts`
+  - `tests/dashboardSelectors.test.ts`
+  - `tests/useCaseClassification.test.ts`（新增）
+  - `README.md`
+  - `docs/PROJECT_HANDOVER.md`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - `package.json`
+  - `package-lock.json`
+- 验证：
+  - `npm run typecheck` 通过
+  - `npm run test` 通过（34/34）
+  - `npm run build` 通过
+  - `npm run check` 通过
+  - `npm run dev` 启动成功（主进程与渲染进程均就绪）
+
+## 2026-03-29 21:16:02 | v1.0.25
+- 操作：手动 Patch 更新（执行 typecheck / build / test / check）
+- 备注：
+  - 接通 Quick Panel 主流程：在主进程快捷键注册中新增 `Command + Shift + V`，并接入 `QuickPanelWindow` 生命周期管理。
+  - Dashboard 双模式卡片补齐 OCR 操作（图片卡片支持 OCR 按钮），保持共享 hooks/actions 架构。
+  - 清理历史未接线模块，删除旧 Dashboard 页面链路与旧窗口管理模块。
+  - 新增工程质量基线：`tests/*.test.ts` + `tsconfig.test.json` + `npm run check`。
+  - 抽离 `isFlowSourceApp` 到纯逻辑模块 `sourceClassifier.ts`，便于 RuleEngine 单元测试。
+  - 更新 `README.md` 与 `docs/PROJECT_HANDOVER.md`，同步当前版本与能力矩阵。
+- 修改文件：
+  - `src/main/index.ts`
+  - `src/main/quickPanelWindow.ts`
+  - `src/main/sourceClassifier.ts`（新增）
+  - `src/main/sourceApp.ts`
+  - `src/main/ruleEngine.ts`
+  - `src/main/tray.ts`
+  - `src/renderer/features/dashboard/shared/dashboard.types.ts`
+  - `src/renderer/features/dashboard/shared/dashboard.hooks.ts`
+  - `src/renderer/features/dashboard/legacy/LegacyRecordCard.tsx`
+  - `src/renderer/features/dashboard/modern/ModernRecordCardImage.tsx`
+  - `tests/ruleEngine.test.ts`（新增）
+  - `tests/dashboardSelectors.test.ts`（新增）
+  - `tests/settingsService.test.ts`（新增）
+  - `tests/storageService.test.ts`（新增）
+  - `tsconfig.test.json`（新增）
+  - `package.json`
+  - `package-lock.json`
+  - `.gitignore`
+  - `README.md`
+  - `docs/PROJECT_HANDOVER.md`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+  - 删除：
+    - `src/renderer/DashboardView.tsx`
+    - `src/renderer/components/ImageCard.tsx`
+    - `src/renderer/components/TextCard.tsx`
+    - `src/main/trayManager.ts`
+    - `src/main/dashboardWindow.ts`
+    - `src/main/globalShortcut.ts`
+- 验证：
+  - `npm run typecheck` 通过
+  - `npm run build` 通过
+  - `npm run test` 通过（24/24）
+  - `npm run check` 通过
+
+## 2026-03-28 18:46:59 | v1.0.24
+- 操作：手动 Patch 更新（不执行 npm / build / package）
+- 备注：
+  - 按“回家换电脑继续开发”场景整理交接信息。
+  - 重写 `docs/PROJECT_HANDOVER.md`，同步到当前版本与当前双模式架构状态。
+  - 补充迁移步骤、关键目录、继续开发入口、版本留痕纪律。
+- 修改文件：
+  - `docs/PROJECT_HANDOVER.md`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：
+  - `./node_modules/.bin/tsc --noEmit` 通过
+
+## 2026-03-28 18:38:35 | v1.0.23
+- 操作：手动 Patch 更新（不执行 npm / build / package）
+- 备注：
+  - 将两个 UI 模式切换按钮文案统一为「UI：模式A / UI：模式B」。
+  - legacy 顶栏按钮改为显示当前模式文案（保留点击切换逻辑）。
+  - modern 顶栏按钮改为全角冒号格式，与 legacy 保持一致。
+- 修改文件：
+  - `src/renderer/features/dashboard/legacy/LegacyDashboardView.tsx`
+  - `src/renderer/features/dashboard/modern/ModernTopBar.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：
+  - `./node_modules/.bin/tsc --noEmit` 通过
+
+## 2026-03-28 18:26:36 | v1.0.22
+- 操作：手动 Patch 更新（不执行 npm / build / package）
+- 备注：
+  - 双模式可见命名统一为「模式A / 模式B」。
+  - 仅调整展示文案，不修改内部 `legacy/modern` 存储值，避免影响已有设置与兼容性。
+  - 新增 `getUIModeLabel()` 统一映射，legacy/modern 视图共用同一命名来源。
+- 修改文件：
+  - `src/renderer/features/dashboard/shared/dashboard.selectors.ts`
+  - `src/renderer/features/dashboard/legacy/LegacyDashboardView.tsx`
+  - `src/renderer/features/dashboard/modern/ModernTopBar.tsx`
+  - `src/renderer/features/dashboard/modern/ModernSidebar.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：
+  - `./node_modules/.bin/tsc --noEmit` 通过
+
+## 2026-03-28 18:08:43 | v1.0.21
+- 操作：手动 Patch 更新（不执行 npm / build / package）
+- 备注：
+  - 新增 Dashboard 双模式架构（legacy + modern），并确保仅在 UI 层分支，数据/业务/IPC 全共享。
+  - 新增统一容器 `DashboardContainer`：集中收敛 records、filter、selection、record actions、runtime settings。
+  - 新增 shared 层：
+    - `dashboard.types.ts`（统一 `DashboardViewProps` 协议）
+    - `dashboard.hooks.ts`（`useDashboardController` + 共享 actions）
+    - `dashboard.selectors.ts`（过滤/尺寸档位/UI mode 切换选择器）
+  - 新增 legacy 视图：
+    - `LegacyDashboardView`
+    - `LegacySidebar`
+    - `LegacyRecordCard`
+  - 新增 modern 视图：
+    - `ModernDashboardView`
+    - `ModernSidebar`
+    - `ModernTopBar`
+    - `ModernRecordCardText/Image/Flow`
+  - `Dashboard.tsx` 改为入口代理，渲染 `DashboardContainer`。
+  - 设置持久化扩展：`RuntimeSettings` 新增 `uiMode: 'legacy' | 'modern'`，main settings 读取与默认值同步更新（`settings.ts` / `index.ts` / `ruleEngine.ts`）。
+  - 开发态提供临时切换入口（无需刷新，切换不丢 records/selection/filter）。
+- 修改文件：
+  - `src/renderer/Dashboard.tsx`
+  - `src/renderer/features/dashboard/container/DashboardContainer.tsx`（新增）
+  - `src/renderer/features/dashboard/shared/dashboard.types.ts`（新增）
+  - `src/renderer/features/dashboard/shared/dashboard.hooks.ts`（新增）
+  - `src/renderer/features/dashboard/shared/dashboard.selectors.ts`（新增）
+  - `src/renderer/features/dashboard/legacy/LegacyDashboardView.tsx`（新增）
+  - `src/renderer/features/dashboard/legacy/LegacySidebar.tsx`（新增）
+  - `src/renderer/features/dashboard/legacy/LegacyRecordCard.tsx`（新增）
+  - `src/renderer/features/dashboard/modern/ModernDashboardView.tsx`（新增）
+  - `src/renderer/features/dashboard/modern/ModernSidebar.tsx`（新增）
+  - `src/renderer/features/dashboard/modern/ModernTopBar.tsx`（新增）
+  - `src/renderer/features/dashboard/modern/ModernRecordCardText.tsx`（新增）
+  - `src/renderer/features/dashboard/modern/ModernRecordCardImage.tsx`（新增）
+  - `src/renderer/features/dashboard/modern/ModernRecordCardFlow.tsx`（新增）
+  - `src/shared/types.ts`
+  - `src/main/settings.ts`
+  - `src/main/index.ts`
+  - `src/main/ruleEngine.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：
+  - `./node_modules/.bin/tsc --noEmit` 通过
+
+## 2026-03-28 16:50:39 | v1.0.20
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：
+  - 新增主进程稳定性探针 `stabilityProbe`，用于高频场景观测：
+    - 连续复制文本/图片处理耗时
+    - 模式切换频率与状态
+    - Dashboard 显示/切换行为
+    - Tray 点击开关行为
+  - 新增异常标记（`[STABILITY][ANOMALY]`）：
+    - 复制处理慢、存储慢、Pin 创建慢
+    - Clipboard tick 跳帧/慢帧
+    - Pin 窗口数量过高、关闭缺失对象
+  - 新增汇总日志（每 30s）：`[STABILITY][SUMMARY]`，输出事件计数与异常总数。
+  - 可通过环境变量关闭日志：`PINSTACK_STABILITY_LOG=0`。
+  - 修改文件：
+  - `src/main/stabilityProbe.ts`（新增）
+  - `src/main/index.ts`
+  - `src/main/clipboardWatcher.ts`
+  - `src/main/pinWindowManager.ts`
+  - `src/renderer/global.d.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：
+  - `npm run typecheck` 通过
+
+## 2026-03-28 16:47:18 | v1.0.19
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：
+  - 删除记录流程改为事务式，避免删除过程中出现“文件已删但索引未更新”或“索引已改但文件未删”的错位：
+    1. 先将原文件原子 `rename` 到 `~/PinStack/.trash/` 暂存；
+    2. 再更新内存记录并持久化 `index.jsonl`；
+    3. 索引持久化成功后，最终删除暂存文件。
+  - 若索引写入失败，会自动回滚：恢复记录并尝试把暂存文件改回原路径。
+  - IPC 删除顺序调整为：先 `storage.deleteRecord` 成功，再关闭 Pin 窗口并触发 `records.changed`，确保 UI 与数据一致。
+- 修改文件：
+  - `src/main/storage.ts`
+  - `src/main/ipc.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 16:38:30 | v1.0.18
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：
+  - Tray 点击行为升级为主入口：若菜单栏面板已显示则关闭；若 Dashboard 已显示则关闭；否则在状态栏附近打开菜单栏面板。
+  - 托盘菜单精简为：`Auto / Silent / Off`（单选勾选） + `Open Dashboard` + `Quit`。
+  - 模式状态同步增强：当 main settings 中 `mode` 被任意入口更新时（Tray / Dashboard / 面板），托盘勾选状态立即同步刷新。
+  - 为菜单栏面板补充 `isVisible()`，用于点击 Tray 时的开关决策。
+- 修改文件：
+  - `src/main/tray.ts`
+  - `src/main/index.ts`
+  - `src/main/menuBarPanelWindow.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 16:29:27 | v1.0.17
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：
+  - 新增数据使用边界说明，明确“仅本地存储、不上传服务器、不发业务网络请求”。
+  - `README` 增加隐私边界章节，并附英文声明：`All your data is stored locally on your device. No data is uploaded.`
+  - 侧边栏新增轻量“设置”面板，展示同样的数据边界说明，便于用户在应用内直接查看。
+- 修改文件：
+  - `README.md`
+  - `src/renderer/Sidebar.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 16:22:04 | v1.0.16
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：
+  - 新增首次启动轻量引导组件，仅首次打开 Dashboard 显示（local flag：`pinstack.hasLaunched`）。
+  - 引导内容包含：复制自动保存说明、面板/截图/快速输入快捷键提示。
+  - 引导为非阻断形式：支持手动关闭，并在 9 秒后自动隐藏。
+- 修改文件：
+  - `src/renderer/components/FirstLaunchGuide.tsx`（新增）
+  - `src/renderer/Dashboard.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 16:15:09 | v1.0.15
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：
+  - 主进程关键路径增加防崩溃兜底：截图保存、剪贴板入库、窗口创建、菜单栏窗口打开均增加 `try/catch` 与 `console.error`。
+  - `ipc` 统一异常处理增强：记录通道级错误日志，并推送 UI toast。
+  - `StorageService` 增强：`image.toPNG()` 异常捕获；`index.jsonl` 持久化队列支持失败后继续写入，避免一次失败后全链路阻塞。
+  - `ClipboardWatcher` 启动初始化增加异常兜底，避免首次读取剪贴板异常导致监听启动失败。
+  - 新增全局 toast 通道：`app.toast`（main -> renderer），并在 `App` 层实现轻量失败提示 UI。
+- 修改文件：
+  - `src/main/index.ts`
+  - `src/main/clipboardWatcher.ts`
+  - `src/main/storage.ts`
+  - `src/main/pinWindowManager.ts`
+  - `src/main/ipc.ts`
+  - `src/main/menuBarPanelWindow.ts`
+  - `src/preload/index.ts`
+  - `src/shared/types.ts`
+  - `src/renderer/global.d.ts`
+  - `src/renderer/App.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 15:53:09 | v1.0.14
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：
+  - 新增权限检测模块（主进程）：剪贴板访问探测、全局快捷键注册状态、辅助功能权限、输入监控扩展位。
+  - 新增权限 IPC：`permissions.status.get`、`permissions.openSettings`。
+  - 新增 Dashboard 权限提示组件：顶部提醒条 + 详情弹窗；可一键打开系统设置并手动刷新状态。
+  - 全局快捷键注册结果接入权限状态快照，未注册时可在 UI 明确提示。
+- 修改文件：
+  - `src/main/permissions.ts`（新增）
+  - `src/main/index.ts`
+  - `src/main/ipc.ts`
+  - `src/preload/index.ts`
+  - `src/shared/types.ts`
+  - `src/renderer/global.d.ts`
+  - `src/renderer/components/PermissionPrompt.tsx`（新增）
+  - `src/renderer/Dashboard.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 15:34:38 | v1.0.13
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：
+  - 设置持久化路径改为固定 `~/PinStack/settings.json`，`SettingsService` 与 `RuntimeSettingsService` 共用同一文件。
+  - 启动时自动加载 settings；若文件不存在则按默认值初始化并落盘。
+  - 更新时实时写入，并通过主进程写入队列避免并发写覆盖，保持 main 为唯一数据源。
+  - 兼容迁移：若旧版设置仍在 `userData/settings.json` 或 `userData/runtime-settings.json`，启动时会自动读取并合并到新文件。
+  - 持久化覆盖项：`mode`、`enableImagePin`、`enableTextPin`、`dashboardSizePreset`、快捷键（`screenshotShortcut`、`dashboardShortcut`）。
+- 修改文件：
+  - `src/main/settings.ts`
+  - `src/main/index.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 15:27:33 | v1.0.12
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：
+  - Dashboard 顶部尺寸档位改为单按钮循环切换，不再显示 3 个独立 `S/M/L` 按钮。
+  - 点击行为为 `S -> M -> L -> S`，并继续通过 `dashboardSizePreset` + `dashboardBounds: undefined` 立即应用对应尺寸。
+  - 新增 `getNextSizePreset()` 与 `getSizePresetLabel()`，按钮保持小型圆角玻璃风格，增加轻微 `scale` 过渡反馈。
+- 修改文件：
+  - `src/renderer/Dashboard.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 15:23:56 | v1.0.11
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：
+  - 控制面板顶部标题改为动态版本文案，样式统一为 `Screen-Pin Window 🐱Vx.x.x`。
+  - 帮助弹窗中的版本行同步改为同一动态文案，避免手工写死 `V1.1`。
+  - 渲染层版本号来源改为构建时注入 `__APP_VERSION__`，后续发版可自动同步显示。
+- 修改文件：
+  - `vite.config.ts`
+  - `src/renderer/version.ts`（新增）
+  - `src/renderer/global.d.ts`
+  - `src/renderer/Dashboard.tsx`
+  - `src/renderer/Sidebar.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 15:03:36 | v1.0.10
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：
+  - 新增菜单栏小窗口 `Menu Bar Panel`，点击 Tray 图标可开关显示，窗口定位到 Tray 图标附近，失焦自动关闭。
+  - 小窗口提供：搜索、最近记录（最多10条）、Copy、Re-Pin、Auto/Silent/Off 模式切换、打开完整 Dashboard。
+  - 新增 `dashboard.open` IPC 通道，供小窗口一键打开完整控制面板。
+- 修改文件：
+  - `src/main/menuBarPanelWindow.ts`（新增）
+  - `src/main/tray.ts`
+  - `src/main/index.ts`
+  - `src/main/ipc.ts`
+  - `src/preload/index.ts`
+  - `src/renderer/global.d.ts`
+  - `src/renderer/MenuBarPanel.tsx`（新增）
+  - `src/renderer/App.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 14:44:56 | v1.0.9
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：
+  - 新增 macOS Swift helper：读取当前前台应用（`NSWorkspace.frontmostApplication`）。
+  - 主进程在剪贴板捕获链路记录 `sourceApp` 并参与分类（Flow 优先于普通 text/image）。
+  - 新增轻量来源匹配函数 `isFlowSourceApp`（兼容大小写与名称变化，含 Terminal/iTerm）。
+  - ClipboardWatcher 增加调试日志：`{ sourceApp, inferredCategory, contentType }`。
+- 修改文件：
+  - `scripts/get-frontmost-app.swift`
+  - `src/main/sourceApp.ts`
+  - `src/main/index.ts`
+  - `src/main/clipboardWatcher.ts`
+  - `src/main/ruleEngine.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 14:37:23 | v1.0.8
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：
+  - Dashboard 批量操作按钮文案中文化：`批量重新固定 / 批量删除 / 清空选择`。
+  - 图片记录默认命名改为 `日-时-分-秒`，并移除各视图中的 `[Image]` 文案。
+  - 兼容旧数据：历史图片记录若 preview 为 `[Image]` 或空值，读取时自动转换为时间格式。
+- 修改文件：
+  - `src/renderer/Dashboard.tsx`
+  - `src/renderer/naming.ts`
+  - `src/renderer/RecordItem.tsx`
+  - `src/renderer/QuickPanel.tsx`
+  - `src/renderer/ImageCard.tsx`
+  - `src/main/storage.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 14:27:26 | v1.0.7
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：
+  - 修复 RecordCard 操作按钮出框（改为可换行，卡片内容区 `overflow-hidden`）。
+  - 新增 Flow 弹卡开关（UI + runtime settings + IPC + 主流程判定）。
+  - Dashboard 尺寸 preset 调整为 `small=800`、`medium=920`、`large=1040`。
+- 修改文件：
+  - `src/renderer/RecordItem.tsx`
+  - `src/renderer/Sidebar.tsx`
+  - `src/renderer/Dashboard.tsx`
+  - `src/shared/types.ts`
+  - `src/main/ipc.ts`
+  - `src/main/index.ts`
+  - `src/main/ruleEngine.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 14:12:54 | v1.0.6
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：Dashboard 尺寸 preset 宽度改为固定值（small=800 / medium=1200 / large=1800），高度与拖拽 resize 逻辑保持不变。
+- 修改文件：
+  - `src/main/index.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 14:08:03 | v1.0.5
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：新增 Flow 一级分类（ChatGPT/Codex/Terminal 自动归类），并补齐存储字段、筛选逻辑、Sidebar 入口与 Flow 卡片视觉样式。
+- 修改文件：
+  - `src/shared/types.ts`
+  - `src/main/index.ts`
+  - `src/main/storage.ts`
+  - `src/renderer/Sidebar.tsx`
+  - `src/renderer/Dashboard.tsx`
+  - `src/renderer/RecordItem.tsx`
+  - `src/renderer/QuickPanel.tsx`
+  - `src/renderer/DashboardView.tsx`
+  - `src/renderer/naming.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 14:02:00 | v1.0.4
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：实现来源应用黑名单（ChatGPT / Codex），命中仅保存；RuleEngine 优先级调整为 mode -> blacklist -> toggle
+- 修改文件：
+  - `src/main/index.ts`
+  - `src/main/ruleEngine.ts`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 13:52:00 | v1.0.3
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：小卡片拖拽条从左侧移动到右侧（镜像布局）
+- 修改文件：
+  - `src/renderer/PinCardView.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 13:45:00 | v1.0.2
+- 操作：手动 Patch 更新（不执行 npm）
+- 备注：按需求将卡片区改为瀑布流多列布局（1/2/3列自适应），切换为纵向滚动并移除固定卡片高度
+- 修改文件：
+  - `src/renderer/Dashboard.tsx`
+  - `src/renderer/CardGrid.tsx`
+  - `src/renderer/RecordItem.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：未执行 npm（按本次限制）
+
+## 2026-03-28 13:32:56 | v1.0.1
+- 操作：Patch 版本自动递增
+- 备注：Unify Dashboard visual tokens with PinCard style (glass-l2/l3 + neutral layer, remove dark panel mismatch)
+- 修改文件：
+  - `src/renderer/Dashboard.tsx`
+  - `src/renderer/Sidebar.tsx`
+  - `package.json`
+  - `package-lock.json`
+  - `CHANGELOG.md`
+  - `WORKLOG.md`
+- 验证：
+  - `npm run typecheck` 通过
+  - 版本号更新为 `1.0.1`
+
+## 2026-03-28 20:00:00 | v1.0.0
+- 操作：建立可持续版本留痕机制并完成 1.0.0 基线发布整理。
+- 已完成：
+  - 版本号统一更新到 `1.0.0`（`package.json` + `package-lock.json` 顶层）。
+  - 新增 `CHANGELOG.md` 记录版本变更。
+  - 新增 `docs/PROJECT_HANDOVER.md` 作为跨电脑交接文档。
+  - 新增自动版本脚本：
+    - `npm run release:patch`（自动 `1.0.X`）
+    - `npm run release:minor`（经同意后 `1.X.0`）
+- 验证：后续每次改动必须同步更新版本和 Markdown 留痕（CHANGELOG + WORKLOG）。

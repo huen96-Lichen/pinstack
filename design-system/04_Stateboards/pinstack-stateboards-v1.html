@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PinStack Stateboards v1</title>
+    <link rel="stylesheet" href="../pinstack-system.css" />
+  </head>
+  <body>
+    <main>
+      <div class="shell">
+        <header class="page-header">
+          <div>
+            <div class="eyebrow">04_Stateboards</div>
+            <h1 class="title">关键状态图</h1>
+            <p class="lede">本轮优先补齐高频状态，而不是把所有长尾低频状态一次性画满。</p>
+          </div>
+          <div class="pill">高频状态优先</div>
+        </header>
+
+        <section class="grid grid-2">
+          <article class="panel">
+            <div class="panel-header">
+              <div class="eyebrow">Launcher States</div>
+              <h2 class="panel-title">桌面悬浮入口</h2>
+            </div>
+            <div class="panel-body">
+              <div class="launcher-row">
+                <div class="launcher"></div>
+                <div class="launcher weak"></div>
+                <div class="launcher drag"></div>
+                <div class="launcher recording"></div>
+              </div>
+              <p class="panel-copy">分别对应正常、边缘弱化、拖拽中、录屏中。</p>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <div class="eyebrow">Card States</div>
+              <h2 class="panel-title">卡片 hover / selected</h2>
+            </div>
+            <div class="panel-body">
+              <div class="card-grid" style="grid-template-columns: repeat(2, minmax(0,1fr));">
+                <div class="card"><strong>Default</strong><p class="copy">工具按钮淡出，内容优先。</p></div>
+                <div class="card" style="border-color:#cfcbc4; box-shadow:0 0 0 1px rgba(124,92,250,0.12);"><strong>Selected</strong><p class="copy">通过边框与轻品牌锚点表达，而不是厚重描边。</p></div>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <div class="eyebrow">Empty / First-use</div>
+              <h2 class="panel-title">空状态与首次使用</h2>
+            </div>
+            <div class="panel-body">
+              <div class="card" style="text-align:center;">
+                <div class="state-chip brand" style="margin:0 auto 12px;">无结果</div>
+                <p class="copy">信息简洁，不使用夸张插画，也不靠大面积品牌色撑画面。</p>
+              </div>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-header">
+              <div class="eyebrow">Expand / Collapse</div>
+              <h2 class="panel-title">AI 工作区 / 推荐区</h2>
+            </div>
+            <div class="panel-body">
+              <div class="button-row">
+                <div class="state-chip brand">展开</div>
+                <div class="state-chip">收起</div>
+              </div>
+              <p class="panel-copy" style="margin-top:14px;">状态变化依赖层级和空间，不依赖炫光或夸张动画。</p>
+            </div>
+          </article>
+        </section>
+      </div>
+    </main>
+  </body>
+</html>

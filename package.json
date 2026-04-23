@@ -1,0 +1,135 @@
+{
+  "name": "pinstack",
+  "version": "2.6.5",
+  "description": "PinStack MVP - clipboard capture and pinned floating cards for macOS",
+  "main": "main.js",
+  "author": "",
+  "license": "MIT",
+  "scripts": {
+    "clean": "rimraf dist",
+    "build:notch": "bash scripts/build-notch.sh",
+    "dev": "concurrently -k \"npm:dev:renderer\" \"npm:dev:main\" \"npm:dev:preload\" \"npm:dev:electron\"",
+    "dev:renderer": "vite",
+    "dev:web": "vite --config web/vite.config.ts",
+    "dev:main": "esbuild src/main/index.ts --bundle --platform=node --format=cjs --external:electron --external:tesseract.js --outfile=dist/main/index.cjs --sourcemap --watch",
+    "dev:preload": "esbuild src/preload/index.ts --bundle --platform=node --format=cjs --external:electron --outfile=dist/preload/index.cjs --sourcemap --watch",
+    "dev:electron": "wait-on tcp:5173 file:dist/main/index.cjs file:dist/preload/index.cjs && cross-env VITE_DEV_SERVER_URL=http://localhost:5173 electronmon dist/main/index.cjs --no-sandbox",
+    "build": "npm run clean && npm run build:main && npm run build:preload && npm run build:renderer && npm run build:web",
+    "build:main": "esbuild src/main/index.ts --bundle --platform=node --format=cjs --external:electron --external:tesseract.js --outfile=dist/main/index.cjs --minify",
+    "build:preload": "esbuild src/preload/index.ts --bundle --platform=node --format=cjs --external:electron --outfile=dist/preload/index.cjs --minify",
+    "build:renderer": "vite build",
+    "build:web": "vite build --config web/vite.config.ts",
+    "typecheck": "tsc --noEmit",
+    "build:test": "tsc -p tsconfig.test.json",
+    "test": "npm run test:unit",
+    "test:unit": "npm run build:test && node --test .tmp-test/tests/**/*.test.js",
+    "check": "npm run typecheck && npm run build && npm run test",
+    "package": "npm run package:mac:arm64",
+    "package:mac:arm64": "npm run build:notch && npm run build && electron-builder --mac dmg --arm64",
+    "package:local": "npm run build:notch && npm run build && cross-env SKIP_NOTARIZE=1 electron-builder --mac dmg --arm64 -c.mac.identity=null",
+    "release:patch": "node scripts/release-patch.mjs",
+    "release:minor": "node scripts/release-minor.mjs --approved-minor",
+    "test:vk-smoke": "node scripts/vk-smoke.mjs",
+    "report:vk-acceptance": "node scripts/vk-acceptance-report.mjs",
+    "install:vk-deps": "bash scripts/vk-install-deps-macos.sh",
+    "install:vk-deps:full": "bash scripts/vk-install-deps-macos.sh --full",
+    "report:vk-progress": "node scripts/vk-progress-report.mjs"
+  },
+  "dependencies": {
+    "framer-motion": "^12.10.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tesseract.js": "^6.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.12.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "@vitejs/plugin-react": "^4.4.1",
+    "autoprefixer": "^10.4.21",
+    "concurrently": "^9.1.2",
+    "cross-env": "^7.0.3",
+    "electron": "^35.1.4",
+    "electron-builder": "^25.1.8",
+    "electronmon": "^2.0.2",
+    "esbuild": "^0.25.2",
+    "postcss": "^8.5.6",
+    "rimraf": "^6.0.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.3",
+    "vite": "^6.2.4",
+    "wait-on": "^8.0.3"
+  },
+  "build": {
+    "appId": "com.pinstack.app",
+    "productName": "PinStack",
+    "afterSign": "scripts/notarize.cjs",
+    "icon": "assets/icons/app/pinstack-app-icon.icns",
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "assets/icons/app/pinstack-app-icon.icns",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.inherit.plist",
+      "target": [
+        "dmg"
+      ]
+    },
+    "dmg": {
+      "contents": [
+        {
+          "x": 150,
+          "y": 180,
+          "type": "file"
+        },
+        {
+          "x": 390,
+          "y": 180,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "width": 540,
+        "height": 380
+      },
+      "backgroundColor": "#ffffff"
+    },
+    "files": [
+      "dist/**/*",
+      "assets/icons/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "scripts/get-frontmost-app.swift",
+        "to": "scripts/get-frontmost-app.swift"
+      },
+      {
+        "from": "native/PinStackNotch/.build/release/PinStackNotch",
+        "to": "native/PinStackNotch/PinStackNotch"
+      },
+      {
+        "from": "native/PinStackNotch/.build/release/PinStackNotch_PinStackNotch.bundle",
+        "to": "native/PinStackNotch/PinStackNotch_PinStackNotch.bundle"
+      },
+      {
+        "from": "native/colorPicker.swift",
+        "to": "native/colorPicker.swift"
+      },
+      {
+        "from": "native/colorPicker.py",
+        "to": "native/colorPicker.py"
+      },
+      {
+        "from": "server/python",
+        "to": "server/python"
+      },
+      {
+        "from": "server/wikiagent",
+        "to": "server/wikiagent"
+      }
+    ]
+  }
+}
